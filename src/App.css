@@ -28,6 +28,15 @@
   color: #61dafb;
 }
 
+body {
+  margin: 0;
+  padding: 0;
+  background-image: url('/public/background.jpg');
+  background-size: cover;
+  background-repeat: no-repeat;
+  font-family: Arial, sans-serif;
+}
+
 @keyframes App-logo-spin {
   from {
     transform: rotate(0deg);
