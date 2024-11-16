@@ -56,3 +56,12 @@
     text-align: center;
     word-break: break-word;
 }
+
+.star {
+    color: #d3d3d3;
+    font-size: 20px;
+}
+
+.star.filled {
+    color: gold;
+}

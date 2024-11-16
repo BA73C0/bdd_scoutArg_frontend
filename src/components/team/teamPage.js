@@ -10,8 +10,6 @@ function TeamPage() {
     const [players, setPlayers] = useState([]);
     const [filteredPlayers, setFilteredPlayers] = useState([]);
     const [search, setSearch] = useState('');
-    const [loading, setLoading] = useState(true);
-    const [error, setError] = useState(null);
     const navigate = useNavigate()
 
     useEffect(() => {
@@ -82,7 +80,6 @@ function TeamPage() {
     const handleRowClick = (player) => {
         navigate(`/teams/${teamData.nombre}/${player.nombre}`);
     }
-
 
     const columns = [
         { name: 'Foto', isImage: true },

@@ -1,6 +1,16 @@
 import React from 'react';
 import './table.css';
 
+function StarRating({ rating }) {
+    const stars = [];
+    for (let i = 0; i < 5; i++) {
+        stars.push(
+            <span key={i} className={`star ${i < rating ? 'filled' : ''}`}>★</span>
+        );
+    }
+    return <div>{stars}</div>;
+}
+
 function Table({ data, columns, onRowClick }) {
 
     return (
@@ -37,6 +47,8 @@ function Table({ data, columns, onRowClick }) {
                                             />
                                         </div>
                                     )
+                                ) : col.name === 'Puntuación' ? (
+                                    <StarRating rating={row.puntuacion} />
                                 ) : (
                                     <div className="table-card-subcontainer">
                                         {row[col.name.toLowerCase()]}

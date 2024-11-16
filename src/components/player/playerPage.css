@@ -1,35 +1,45 @@
 .player-page {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
     padding: 20px;
-    font-family: Arial, sans-serif;
+    min-height: 100vh; 
 }
 
 .player-header {
     text-align: center;
-    margin-bottom: 30px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin-top: 20px;
 }
 
 .player-picture {
-    width: 150px;
-    height: 150px;
-    object-fit: cover;
+    width: 120px;
+    height: 120px;
+    object-fit: contain;
     border-radius: 50%;
-    margin-bottom: 15px;
     border: 3px solid #ccc;
 }
 
 .player-name {
-    font-size: 28px;
+    font-size: 24px;
     font-weight: bold;
     color: #333;
-    margin-bottom: 10px;
 }
 
 .player-details {
+    padding-left: 15px;
     display: flex;
     justify-content: center;
-    gap: 20px;
+    gap: 40px;
     font-size: 18px;
     color: #666;
+    margin-bottom: 30px;
+}
+
+.player-details span {
+    padding: 5px 10px; 
 }
 
 .player-opinions {
@@ -62,4 +72,18 @@
 
 .opinions-table tbody tr:nth-child(even) {
     background-color: #f9f9f9;
+}
+
+.add-opinion-btn {
+    margin-top: 20px;
+    padding: 10px 20px;
+    background-color: #007BFF;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+.add-opinion-btn:hover {
+    background-color: #0056b3;
 }
