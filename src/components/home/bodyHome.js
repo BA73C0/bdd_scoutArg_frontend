@@ -29,7 +29,17 @@ function BodyHome() {
         const exampleTeam = [
             {
                 escudo: '/logo512.png',
-                nombre: 'Equipo Ejemplo',
+                nombre: 'Equipo 1',
+                team_id: 1,
+            },
+            {
+                escudo: '/logo512.png',
+                nombre: 'Equipo 2',
+                team_id: 2,
+            },
+            {
+                escudo: '/logo512.png',
+                nombre: 'Equipo 3',
                 team_id: 1,
             }
         ];
@@ -45,7 +55,7 @@ function BodyHome() {
     };
 
     const handleRowClick = (team) => {
-        navigate(`/teams/${team.team_id}/${team.nombre}`);
+        navigate(`/teams/${team.nombre}`);
     }
 
     const columns = [
@@ -55,6 +65,8 @@ function BodyHome() {
 
     return (
         <section className="body-home">
+            <header className="body-header">
+            </header>
             <SearchBar 
                 placeholder="Buscar equipo..." 
                 value={search} 
