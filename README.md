@@ -1,9 +1,11 @@
 ## Todo
 
-- [] habria que ver Table para que se pueda scrollear y que los nombres de las columnas se queden arriba
-- [] hacer un footer (algo q tenga el nombre de nuestro grupo¿?) y un header (algo q tenga el user actual) para todas las paginas
-- [] hacer la pagina de inicio
-- [] hacer la pagina de SignUp y SingIn
+- [ ] habria que ver Table para que se pueda scrollear y que los nombres de las columnas se queden arriba
+- [ ] hacer un footer y un header para todas las paginas
+      - footer: algo q tenga el nombre de nuestro grupo¿?
+      - header: algo q tenga el user actual
+- [ ] hacer la pagina de inicio
+- [ ] hacer la pagina de SignUp y SingIn
 
 ## Para correr
 ### `npm start`
