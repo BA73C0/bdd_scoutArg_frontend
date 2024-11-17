@@ -2,7 +2,7 @@
     width: 60%;
     border-collapse: collapse;
     margin-top: 20px;
-    background-color: #fff;
+    background-color: #ffffff00;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
     border-radius: 8px;
     overflow: hidden;
@@ -11,7 +11,7 @@
 }
 
 .table-head {
-    background-color: #007bff; 
+    background-color: #004906; 
     color: white;
     text-align: center;
 }
@@ -24,6 +24,7 @@
 
 .table-body {
     background-color: #f0eeee;
+    color: #004906;
 }
 
 .table-card {
@@ -34,7 +35,7 @@
 
 .table-card:hover {
     transform: scale(1.02);
-    background-color: #bfcdda;
+    background-color: #99FF55;
 }
 
 .table-card-logo {

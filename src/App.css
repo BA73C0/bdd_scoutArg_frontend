@@ -28,12 +28,15 @@
   color: #61dafb;
 }
 
-body {
+body{
   margin: 0;
   padding: 0;
-  background-image: url('/public/background.jpg');
+  background-color: black;
+  background: 
+    linear-gradient(rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.7)),
+    url('/public/background.jpg');
   background-size: cover;
-  background-repeat: no-repeat;
+  background-repeat: repeat;
   font-family: Arial, sans-serif;
 }
 
