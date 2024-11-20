@@ -3,6 +3,8 @@ import Table from '../table/table';
 import SearchBar from '../searchBar/searchBar';
 import { useNavigate } from 'react-router-dom';
 import './bodyHome.css';
+import { API_URL } from '../../utils';
+
 
 function BodyHome() {
     const [teams, setTeams] = useState([]);
@@ -11,41 +13,27 @@ function BodyHome() {
     const navigate = useNavigate()
 
     useEffect(() => {
-        /*
         const fetchTeams = async () => {
             try {
-                const response = await fetch('https://api.ejemplo.com/teams');
+                const response = await fetch(`${API_URL}/teams`);
+                if (!response.ok) {
+                    throw new Error('Error al obtener los equipos');
+                }
                 const data = await response.json();
-                setTeams(data);
-                setFilteredTeams(data);
+                const formattedTeams = data.map(team => ({
+                    escudo: team.photo || '/logo512.png',
+                    nombre: team.name,
+                    team_id: team.id
+                }));
+
+                setTeams(formattedTeams);
+                setFilteredTeams(formattedTeams);
             } catch (error) {
                 console.error('Error fetching teams:', error);
             }
         };
-
+    
         fetchTeams();
-        */
-
-        const exampleTeam = [
-            {
-                escudo: '/logo512.png',
-                nombre: 'Equipo 1',
-                team_id: 1,
-            },
-            {
-                escudo: '/logo512.png',
-                nombre: 'Equipo 2',
-                team_id: 2,
-            },
-            {
-                escudo: '/logo512.png',
-                nombre: 'Equipo 3',
-                team_id: 1,
-            }
-        ];
-
-        setTeams(exampleTeam);  // Establece el equipo manualmente
-        setFilteredTeams(exampleTeam);
     }, []);
 
     const handleSearch = (query) => {
@@ -55,7 +43,7 @@ function BodyHome() {
     };
 
     const handleRowClick = (team) => {
-        navigate(`/teams/${team.nombre}`);
+        navigate(`/teams/${team.team_id}/${team.nombre}`);
     }
 
     const columns = [

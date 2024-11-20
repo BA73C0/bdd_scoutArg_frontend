@@ -1,46 +1,58 @@
 import React, { useEffect, useState } from 'react';
+import { useParams, useNavigate } from 'react-router-dom';
 import Table from '../table/table';
 import AddOpinionModal from '../addOpinionButton/addOpinionModal';
 import './playerPage.css';
+import { API_URL } from '../../utils';
+
 
 function BodyHome() {
+    const { playerId } = useParams();
     const [playerData, setPlayerData] = useState({ foto: '', nombre: '', posicion: '', numero: '' });
     const [opinions, setOpinions] = useState([]);
     const [isModalOpen, setIsModalOpen] = useState(false);
+    const [error, setError] = useState(null);
+    const [loading, setLoading] = useState(true);
+    const navigate = useNavigate();
 
     useEffect(() => {
-        /*
-        const fetchPlayer = async () => {
+        const fetchPlayerData = async () => {
             try {
-                const response = await fetch('https://api.ejemplo.com/players/${playerId}');
-                const data = await response.json();
-                setPlayerData(data);
-            } catch (error) {
-                console.error('Error fetching teams:', error);
+                setLoading(true);
+                const playerResponse = await fetch(`${API_URL}/players/${playerId}`);
+                if (!playerResponse.ok) {
+                    throw new Error('Error fetching team data');
+                }
+                const playerData = await playerResponse.json();
+
+                const formattedplayerData = {
+                    foto: playerData.photo || '/jugador.png',
+                    nombre: playerData.name,
+                    posicion: playerData.position,
+                    numero: playerData.number,
+                    id: playerData.id,
+                    edad: playerData.age,
+                };
+                
+                setPlayerData(formattedplayerData);
+
+                // las opiniones siguen hardcodeadas
+                const opinionsResponse = [
+                    { usuario: 'Usuario1', opinion: 'Gran arquero, muy seguro.' , puntuacion: 5},
+                    { usuario: 'Usuario2', opinion: 'Debe mejorar los reflejos.' , puntuacion: 3},
+                    { usuario: 'Usuario3', opinion: 'Excelente en penales.' , puntuacion: 4},
+                ];
+                setOpinions(opinionsResponse);
+
+
+            } catch (err) {
+                setError(err.message);
+            } finally {
+                setLoading(false);
             }
         };
 
-        setPlayerData(examplePlayer);
-
-        setOpinions(opinionsResponse);?????
-        
-        fetchPlayer();
-        */
-
-        const examplePlayer = {
-            foto: '/jugador.png',
-            nombre: 'Jugador 1',
-            posicion: 'Arquero',
-            numero: 1
-        };
-        setPlayerData(examplePlayer);
-        
-        const opinionsResponse = [
-            { usuario: 'Usuario1', opinion: 'Gran arquero, muy seguro.' , puntuacion: 5},
-            { usuario: 'Usuario2', opinion: 'Debe mejorar los reflejos.' , puntuacion: 3},
-            { usuario: 'Usuario3', opinion: 'Excelente en penales.' , puntuacion: 4},
-        ];
-        setOpinions(opinionsResponse);
+        fetchPlayerData();
     }, []);
 
     const opinionColumns = [
@@ -60,7 +72,7 @@ function BodyHome() {
 
     /*
     const handleAddOpinion = (newOpinion) => {
-        setOpinions([...opinions, newOpinion]);  // Agrega la nueva opinión a la lista de opiniones
+        setOpinions([...opinions, newOpinion]);
     };
     */
 

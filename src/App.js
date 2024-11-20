@@ -14,9 +14,9 @@ function App() {
         <Route index element={<LandingPage />} />
         <Route path="/sign-in" element={<SignIn />} />
         <Route path="/sign-up" element={<SignUp />} />
-        <Route path="/home" element={<Home />} />
-        <Route path="/teams/:teamName" element={<Team />} />
-        <Route path="/teams/:teamName/:playerName" element={<Player />} />
+        <Route path="/teams" element={<Home />} />
+        <Route path="/teams/:teamId/:teamName" element={<Team />} />
+        <Route path="/teams/:teamName/:playerId/:playerName" element={<Player />} />
       </Routes>
     </BrowserRouter>
   );
