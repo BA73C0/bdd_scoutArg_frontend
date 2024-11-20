@@ -6,6 +6,7 @@
       - header: algo q tenga el user actual
 - [ ] hacer la pagina de inicio
 - [ ] hacer la pagina de SignUp y SingIn
+- [x] agregar fetchs
 
 ## Para correr
 ### `npm start`
