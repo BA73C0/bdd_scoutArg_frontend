@@ -1,25 +1,38 @@
-.table {
+.table-container {
     width: 60%;
+    max-height: 400px;
+    overflow-y: auto;
+    overflow-x: hidden;
+    scrollbar-width: none;
+    position: relative;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.table {
+    width: 100%;
     border-collapse: collapse;
     margin-top: 20px;
     background-color: #ffffff00;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-    border-radius: 8px;
-    overflow: hidden;
     margin: 0 auto;
-    table-layout: auto;
+    table-layout: fixed;
 }
 
 .table-head {
     background-color: #004906; 
     color: white;
     text-align: center;
+    position: sticky;
+    top: 0;
+    z-index: 1;
 }
 
 .column-names th {
     padding: 10px;
     font-size: 18px;
-    width: 150px;
+    width: 100%;
+    text-align: center;
+    word-wrap: break-word;
 }
 
 .table-body {
@@ -34,7 +47,7 @@
 }
 
 .table-card:hover {
-    transform: scale(1.02);
+    transform: scale(1.05);
     background-color: #99FF55;
 }
 
