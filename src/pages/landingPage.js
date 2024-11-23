@@ -1,7 +1,10 @@
 import React from 'react';
+import Landing from '../components/landing/landing';
 
 function LandingPage() {
-  return <h1>Bienvenido a la Página de Inicio</h1>;
+  return     <div className ="app-container">
+  <Landing className="body-container"/>
+  </div>;
 }
 
 export default LandingPage;

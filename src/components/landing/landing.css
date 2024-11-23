@@ -1,0 +1,33 @@
+
+.landing {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    height: 100%;
+    text-align: center;
+    min-height: 100vh;
+}
+
+
+.logo-inicio {
+    width: 100%;
+    height: auto;
+  }
+
+
+.text-container p {
+    font-size: 1.8em;
+    color: #ffffff;
+    max-width: 600px;
+    margin-top: 10px;
+}
+
+.link {
+    color: #99FF55;; /* Color del texto */
+    text-decoration: none; /* Sin subrayado */
+  }
+  
+  .link:hover {
+    text-decoration: underline; /* Subrayado cuando se pase el ratón por encima */
+  }

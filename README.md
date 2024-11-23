@@ -1,9 +1,9 @@
 ## Todo
 
-- [ ] hacer un footer y un header para todas las paginas
+- [x] hacer un footer y un header para todas las paginas
     - footer: algo q tenga el nombre de nuestro grupo¿?
     - header: algo q tenga el user actual
-- [ ] hacer la pagina de inicio
+- [x] hacer la pagina de inicio
 - [ ] hacer la pagina de SignUp y SingIn
 - [ ] agregar fetch para las opiniones (cuando este hecho)
 
