@@ -1,42 +1,62 @@
 /* Estilos para el Header */
 .header {
-    background-color: #004906; ;
-    color: white;
-    padding: 10px;
-    text-align: center;
-  }
-  
-.header h1 {
-    margin: 0;
-  }
+  display: flex;
+  justify-content: space-between;
+  background-color: #004906; ;
+  color: white;
+  padding: 10px;
+  text-align: center;
+}
 
-  .header nav ul {
-    list-style-type: none;
-    padding: 0;
+.header h1 {
+  margin: 0;
 }
-  
+
+.header nav ul {
+  list-style-type: none;
+  padding: 0;
+}
+
 .header nav ul li {
-    display: inline;
-    margin: 0 10px;
+  display: inline;
+  margin: 0 10px;
 }
-  
+
 .header nav ul li a {
-    color: white;
-    text-decoration: none;
+  color: white;
+  text-decoration: none;
 }
-  
+
 .header nav ul li a:hover {
-    text-decoration: underline;
+  text-decoration: underline;
 }
+
 .logo-container {
-    display: flex;
-    align-items: center;
-    justify-content: left;
-    padding: 10px;
-  }
-  
+  display: flex;
+  align-items: center;
+  justify-content: left;
+  padding: 10px;
+}
+
+
+.auth-buttons {
+  display: flex;
+  margin: 20px;
+  justify-content: flex-end;  /* Alinea los botones a la derecha */
+  width: 20%;  /* Asegura que los botones se ubiquen al final del contenedor */
+}
+
+.auth-button {
+  padding: 10px 24px;
+  font-size: 14px;
+  background-color: #005507;
+  color: white;
+  cursor: pointer;
+  border-radius: 4px;
+}
+
 .logo {
     width: 50px;  /* Ajusta el tamaño del logo */
     height: auto;
     cursor: pointer;
-  }
+}

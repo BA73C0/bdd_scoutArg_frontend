@@ -1,5 +1,8 @@
 .App {
   text-align: center;
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
 }
 
 .App-logo {
@@ -39,6 +42,8 @@ body{
   background-repeat: repeat;
   font-family: Arial, sans-serif;
 }
+
+
 
 @keyframes App-logo-spin {
   from {
