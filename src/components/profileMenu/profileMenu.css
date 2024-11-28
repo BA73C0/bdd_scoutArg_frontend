@@ -1,0 +1,40 @@
+.menu-button {
+    background-color: var(--navbar-background-color);
+    color: white;
+    width: 40px;
+    align-items: center;
+    justify-content: center;
+}
+
+.menu-button:hover {
+    cursor: pointer;
+    background-color: #00ff22;
+}
+
+.menu-dropdown {
+    position: absolute;
+    top: 100%;
+    right: 0;
+    background-color: var(--navbar-background-color);
+    color: white;
+    border: 1px solid var(--button-background-color);
+    border-radius: 4px;
+    z-index: 1;
+    width: 150px;
+}
+
+.menu-item {
+    display: block;
+    padding: 10px 15px;
+    width: 100%;
+    text-align: left;
+    color: white;
+    font-weight: 500;
+    background-color: transparent;
+    border: none;
+    cursor: pointer;
+}
+
+.menu-item:hover {
+    background-color: var(--button-hover-background-color);
+}

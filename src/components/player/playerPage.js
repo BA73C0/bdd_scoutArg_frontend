@@ -4,6 +4,7 @@ import Table from '../table/table';
 import AddOpinionModal from '../addOpinionButton/addOpinionModal';
 import './playerPage.css';
 import { API_URL } from '../../utils';
+import LoadingSpinner from '../loadingSpinner/loadingSpinner'
 
 
 function BodyHome() {
@@ -21,7 +22,7 @@ function BodyHome() {
                 setLoading(true);
                 const playerResponse = await fetch(`${API_URL}/players/${playerId}`);
                 if (!playerResponse.ok) {
-                    throw new Error('Error fetching team data');
+                    throw new Error('Error fetching player data');
                 }
                 const playerData = await playerResponse.json();
 
@@ -36,13 +37,17 @@ function BodyHome() {
                 
                 setPlayerData(formattedplayerData);
 
-                // las opiniones siguen hardcodeadas
-                const opinionsResponse = [
-                    { usuario: 'Usuario1', opinion: 'Gran arquero, muy seguro.' , puntuacion: 5},
-                    { usuario: 'Usuario2', opinion: 'Debe mejorar los reflejos.' , puntuacion: 3},
-                    { usuario: 'Usuario3', opinion: 'Excelente en penales.' , puntuacion: 4},
-                ];
-                setOpinions(opinionsResponse);
+                console.log(playerId);
+
+                const opinionsResponse = await fetch(`${API_URL}/players/opinions/${playerId}`);
+                if (!opinionsResponse.ok) {
+                    throw new Error('Error fetching opinions');
+                }
+
+                const opinionsData = await opinionsResponse.json();
+
+                console.log(opinionsData);
+                //setOpinions(opinionsData);
 
 
             } catch (err) {
@@ -75,6 +80,10 @@ function BodyHome() {
         setOpinions([...opinions, newOpinion]);
     };
     */
+
+    if (loading) {
+        return <LoadingSpinner/>;
+    }
 
     return (
         <section className="player-home">

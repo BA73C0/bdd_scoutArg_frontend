@@ -1,19 +1,18 @@
-import './App.css'
-import { BrowserRouter, Route, Routes } from 'react-router-dom';
-import LandingPage from './pages/landingPage'
+import './App.css';
+import { BrowserRouter, Route, Routes, useLocation } from 'react-router-dom';
+import LandingPage from './pages/landingPage';
 import SignIn from './pages/signIn';
-import SignUp from './pages/signUp'
-import Home from './pages/home'
-import Team from './pages/team'; 
-import Player from './pages/player'; 
+import SignUp from './pages/signUp';
+import Home from './pages/home';
+import Team from './pages/team';
+import Player from './pages/player';
 import Header from './components/header/header';
 import Footer from './components/footer/footer';
 
 function App() {
   return (
     <BrowserRouter>
-    {/* Agrega el Header aquí, fuera de las rutas, para que esté visible en todas las páginas */}
-    <Header />
+      <ConditionalHeader /> 
       <Routes>
         <Route index element={<LandingPage />} />
         <Route path="/sign-in" element={<SignIn />} />
@@ -25,6 +24,15 @@ function App() {
       <Footer />
     </BrowserRouter>
   );
+}
+
+function ConditionalHeader() {
+  const location = useLocation(); 
+  const noHeader = ['/', '/sign-in', '/sign-up']; 
+
+  const isSpecialHeader = noHeader.includes(location.pathname);
+
+  return isSpecialHeader ? "" : <Header />;
 }
 
 export default App;

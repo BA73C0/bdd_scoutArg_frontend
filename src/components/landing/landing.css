@@ -1,33 +1,46 @@
-
 .landing {
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-    height: 100%;
-    text-align: center;
-    min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  height: 100%;
+  text-align: center;
+  min-height: 100vh;
 }
 
+.landing-home {
+  display: flex;
+  align-items: center;
+  justify-content: center;  /* Centra los elementos horizontalmente */
+  width: 100%;
+  max-width: 800px;
+  margin-bottom: 20px;
+}
 
-.logo-inicio {
-    width: 100%;
-    height: auto;
-  }
+.logo-container {
+  flex: 0 1 auto;
+  text-align: center;
+  margin: 0 20px; /* Espacio entre el logo y los botones */
+}
 
+.landing-home-button {
+  background-color: #55a02a;
+  color: white;
+  border-radius: 10px;
+  border: 5px solid var(--footer-background-color);
+  padding: 10px 40px;
+  font-size: 1em;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.landing-home-button:hover {
+  background-color: #7ccc4d;
+}
 
 .text-container p {
-    font-size: 1.8em;
-    color: #ffffff;
-    max-width: 600px;
-    margin-top: 10px;
+  font-size: 1.8em;
+  color: #ffffff;
+  max-width: 600px;
+  margin-top: 10px;
 }
-
-.link {
-    color: #99FF55;; /* Color del texto */
-    text-decoration: none; /* Sin subrayado */
-  }
-  
-  .link:hover {
-    text-decoration: underline; /* Subrayado cuando se pase el ratón por encima */
-  }

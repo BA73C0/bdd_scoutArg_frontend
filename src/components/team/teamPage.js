@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import Table from '../table/table';
 import SearchBar from '../searchBar/searchBar';
+import LoadingSpinner from '../loadingSpinner/loadingSpinner'
 import './teamPage.css';
 import { API_URL } from '../../utils';
 
@@ -17,8 +18,8 @@ function TeamPage() {
 
     useEffect(() => {
         const fetchTeamData = async () => {
+            setLoading(true);
             try {
-                setLoading(true);
                 const teamResponse = await fetch(`${API_URL}/teams/${teamId}`);
                 if (!teamResponse.ok) {
                     throw new Error('Error fetching team data');
@@ -35,16 +36,23 @@ function TeamPage() {
                     throw new Error('Error fetching players');
                 }
                 const playersData = await playersResponse.json();
-                
-                const formattedPlayers = playersData.players.map(player => ({
-                    foto: player.photo || '/jugador.png',
-                    nombre: player.name,
-                    posicion: player.position,
-                    numero: player.number,
-                    id: player.id,
+
+                const playersRes = await fetch(`${API_URL}/players/${playersData}`);
+                if (!playersRes.ok) {
+                    throw new Error('Error fetching player data');
+                }
+
+                const playerData = await playersRes.json();
+
+                const formattedPlayers = [playerData].map(player => ({
                     edad: player.age,
+                    nombre: player.name,
+                    numero: player.number,
+                    posicion: player.position,
+                    id: player.id,
+                    foto: '/jugador.png',
                 }));
-                
+
                 setPlayers(formattedPlayers);
                 setFilteredPlayers(formattedPlayers);
                 setTeamData(formattedTeamData);
@@ -57,6 +65,10 @@ function TeamPage() {
 
         fetchTeamData();
     }, [teamId]);
+
+    if (loading) {
+        return <LoadingSpinner/>;
+    }
 
     const handleSearch = (query) => {
         setSearch(query);

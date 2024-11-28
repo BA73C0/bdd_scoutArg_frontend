@@ -1,16 +1,24 @@
 import React from 'react';
-import SignUpWindow from '../components/signUpWindow/signUpWindow';  // Importa el componente SignUpWindow
+import BasicForm from '../components/basicForm/basicForm';
 
 const SignInPage = () => {
-  // Función que maneja el inicio de sesión
-  const handleSignIn = (username, password) => {
-    console.log('Iniciando sesión con:', username, password);
-    // Aquí puedes agregar la lógica para iniciar sesión (por ejemplo, validar con la API)
+  const handleSignIn = (formData) => {
+    const { username, password } = formData;
+    console.log('Iniciando sesion con con:', username, password);
   };
+
+  const fields = [
+    { name: 'username', label: 'Nombre de usuario', type: 'text', required: true },
+    { name: 'password', label: 'Contraseña', type: 'password', required: true },
+  ];
 
   return (
     <div className="app-container">
-      <SignUpWindow isSignUp={false} onSubmit={handleSignIn}/>  {/* Llama al componente SignUpWindow */}
+      <div className="form-window">
+        <h2>Iniciar sesión</h2>
+        <BasicForm fields={fields} onSubmit={handleSignIn} />
+        <p>Todavía no estás registrado? <a href="/sign-up" className="link">Registrarse</a></p>
+      </div>
     </div>
   );
 };

@@ -1,17 +1,28 @@
 import React from 'react';
-import SignUpWindow from '../components/signUpWindow/signUpWindow';
+import BasicForm from '../components/basicForm/basicForm';
 
-const SignUp = () => {
-  // Función que maneja el envío del formulario de registro
-  const handleSignUp = (username, password) => {
-    // Aquí puedes agregar lógica para registrar al usuario (por ejemplo, enviar una solicitud a la API)
+const SignUpPage = () => {
+  const handleSignUp = (formData) => {
+    const { username, email, password } = formData;
+    console.log('Creando user con:', username, email, password);
   };
+
+  const fields = [
+    { name: 'username', label: 'Nombre de usuario', type: 'text', required: true },
+    { name: 'email', label: 'Email', type: 'text', required: true },
+    { name: 'password', label: 'Contraseña', type: 'password', required: true },
+    { name: 'confirm_password', label: 'Confirmar contraseña', type: 'password', required: true },
+  ];
 
   return (
     <div className="app-container">
-      <SignUpWindow isSignUp={true} onSubmit={handleSignUp}/>  {/* Llama al componente SignUpWindow */} 
+      <div className="form-window">
+        <h2>Registrarse</h2>
+        <BasicForm fields={fields} onSubmit={handleSignUp} />
+        <p>Ya estás registrado? <a href="/sign-in" className="link">Iniciar sesión</a></p>
+      </div>
     </div>
   );
 };
 
-export default SignUp;
+export default SignUpPage;

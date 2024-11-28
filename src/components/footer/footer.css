@@ -1,6 +1,5 @@
-/* Estilos para el Footer */
 .footer {
-    background-color: #004906; ;  /* Fondo oscuro */
+    background-color: var(--footer-background-color); ;  /* Fondo oscuro */
     color: white;  /* Texto blanco */
     padding: 20px;  /* Espaciado alrededor */
     text-align: center;  /* Centrar el contenido */

@@ -5,7 +5,7 @@ const Logo = () => {
     return (
     <div className="logo-container">
       <Link to="/teams" className="logo-link">
-        <img src="logo512.png" alt="Logo" className="logo" /> {/* Asegúrate de tener el logo en el directorio correcto */}
+        <img src="logo512.png" alt="Logo" className="logo" /> 
       </Link>
     </div>
   );

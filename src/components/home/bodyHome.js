@@ -4,16 +4,19 @@ import SearchBar from '../searchBar/searchBar';
 import { useNavigate } from 'react-router-dom';
 import './bodyHome.css';
 import { API_URL } from '../../utils';
+import LoadingSpinner from '../loadingSpinner/loadingSpinner'
 
 
 function BodyHome() {
     const [teams, setTeams] = useState([]);
     const [filteredTeams, setFilteredTeams] = useState([]);
     const [search, setSearch] = useState('');
+    const [loading, setLoading] = useState(true);
     const navigate = useNavigate()
 
     useEffect(() => {
         const fetchTeams = async () => {
+            setLoading(true);
             try {
                 const response = await fetch(`${API_URL}/teams`);
                 if (!response.ok) {
@@ -30,6 +33,8 @@ function BodyHome() {
                 setFilteredTeams(formattedTeams);
             } catch (error) {
                 console.error('Error fetching teams:', error);
+            } finally {
+                setLoading(false);
             }
         };
     
@@ -50,6 +55,10 @@ function BodyHome() {
         { name: 'Escudo', isImage: true },
         { name: 'Nombre', isImage: false }
     ];
+
+    if (loading) {
+        return <LoadingSpinner/>;
+    }
 
     return (
         <section className="body-home">
