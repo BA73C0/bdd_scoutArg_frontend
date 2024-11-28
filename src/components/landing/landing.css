@@ -32,6 +32,7 @@
   font-size: 1em;
   cursor: pointer;
   transition: background-color 0.3s ease;
+  height: 70px;
 }
 
 .landing-home-button:hover {
