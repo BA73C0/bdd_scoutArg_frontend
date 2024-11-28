@@ -10,6 +10,7 @@
     - [ ] Actualizar jugador en Player
 - [ ] Corregir errores de sintaxis y de importaciones no usadas
 - [ ] Arregar riesgos de npm ¿?
+- [ ] Terminar/Corregir SeeOpinionModel
 
 ## Para correr
 ### `npm install`
