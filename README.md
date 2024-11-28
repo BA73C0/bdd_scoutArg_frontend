@@ -1,13 +1,23 @@
 ## Todo
 
-- [x] hacer un footer y un header para todas las paginas
-    - footer: algo q tenga el nombre de nuestro grupo¿?
-    - header: algo q tenga el user actual
-- [x] hacer la pagina de inicio
-- [ ] hacer la pagina de SignUp y SingIn
-- [ ] agregar fetch para las opiniones (cuando este hecho)
+- [ ] LogOut
+    - En el header ya hay un boton pero no anda
+- [ ] Elegir un tipo de letra para la app
+- [ ] Agregar css para errores
+    - Por ahora solo hay en SignUp y SignIn, pero habria q hacerlo para todas las pags con errores
+- [ ] Agregar opiniones de equipo
+    - Deje una posible forma en ds (Brainstorm)
+- [ ] Faltan botones
+    - [ ] Agregar equipo en Home
+    - [ ] Borrar equipo en Team
+    - [ ] Actualizar equipo en Team
+    - [ ] Agregar jugador en Team
+    - [ ] Actualizar jugador en Player
+- [ ] Corregir errores de sintaxis y de importaciones no usadas
+- [ ] Arregar riesgos de npm ¿?
 
 ## Para correr
+### `npm install`
 ### `npm start`
 
 Runs the app in the development mode.\
