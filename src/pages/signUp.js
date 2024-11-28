@@ -1,10 +1,47 @@
-import React from 'react';
+import { API_URL } from '../utils';
+import React, { useState } from 'react';
 import BasicForm from '../components/basicForm/basicForm';
+import { useNavigate } from 'react-router-dom';
 
 const SignUpPage = () => {
-  const handleSignUp = (formData) => {
-    const { username, email, password } = formData;
-    console.log('Creando user con:', username, email, password);
+  const navigate = useNavigate();
+  const [error, setError] = useState(null);
+  
+  const handleSignUp = async (formData) => {
+    const { username, email, password, confirm_password } = formData;
+
+    if (password !== confirm_password) {
+      setError('Las contraseñas no coinciden');
+      return
+    }
+
+    const json = {};
+
+    json["email"] = email;
+    json["name"] = username;
+    json["password"] = password;
+
+    try {
+      const registerReponse = await fetch(`${API_URL}/users` , {
+        method: 'POST',
+        body: JSON.stringify(json),
+        headers: {
+          'Content-Type': 'application/json',
+        },
+
+      });
+
+      if (!registerReponse.ok) {
+        throw new Error('Error registrando usuario');
+      }
+
+      await registerReponse.json();
+    } catch (error) {
+      setError('Error en el registro');
+    } finally {
+      navigate('/teams');
+    }
+
   };
 
   const fields = [
@@ -19,6 +56,7 @@ const SignUpPage = () => {
       <div className="form-window">
         <h2>Registrarse</h2>
         <BasicForm fields={fields} onSubmit={handleSignUp} />
+        {error && <p style={{ color: 'red', maxWidth: '255px', textAlign: 'center' }}>{error}</p>}
         <p>Ya estás registrado? <a href="/sign-in" className="link">Iniciar sesión</a></p>
       </div>
     </div>

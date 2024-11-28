@@ -39,15 +39,15 @@ function BodyHome() {
 
                 console.log(playerId);
 
-                const opinionsResponse = await fetch(`${API_URL}/players/opinions/${playerId}`);
-                if (!opinionsResponse.ok) {
-                    throw new Error('Error fetching opinions');
-                }
-
-                const opinionsData = await opinionsResponse.json();
-
-                console.log(opinionsData);
+               
                 //setOpinions(opinionsData);
+
+                const opinionsResponse = [
+                    { usuario: 'Usuario1', opinion: 'Gran arquero, muy seguro.' , puntuacion: 5},
+                    { usuario: 'Usuario2', opinion: 'Debe mejorar los reflejos.' , puntuacion: 3},
+                    { usuario: 'Usuario3', opinion: 'Excelente en penales.' , puntuacion: 4},
+                ];
+                setOpinions(opinionsResponse);
 
 
             } catch (err) {
