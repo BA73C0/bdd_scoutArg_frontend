@@ -17,6 +17,7 @@
   margin-bottom: 20px;
 }
 
+
 .logo-container {
   flex: 0 1 auto;
   text-align: center;
@@ -29,7 +30,6 @@
   border-radius: 10px;
   border: 5px solid var(--footer-background-color);
   padding: 10px 40px;
-  font-size: 1em;
   cursor: pointer;
   transition: background-color 0.3s ease;
   height: 70px;
@@ -42,6 +42,13 @@
 .text-container p {
   font-size: 1.8em;
   color: #ffffff;
+  max-width: 600px;
+  margin-top: 10px;
+}
+
+.title-container {
+  font-size: 3em;
+  color:#ffffff;
   max-width: 600px;
   margin-top: 10px;
 }

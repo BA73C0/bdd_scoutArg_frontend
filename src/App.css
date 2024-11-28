@@ -86,7 +86,7 @@ body{
     url('/public/background.jpg');
   background-size: cover;
   background-repeat: repeat;
-  font-family: Arial, sans-serif;
+  font-family: 'Oswald';
 }
 
 @keyframes App-logo-spin {

@@ -15,8 +15,8 @@ function Landing() {
 
   return (
     <div className="landing">
-      <div className="text-container">
-        <p> ScoutArg </p>
+      <div className="title-container">
+        <h1> ScoutArg </h1>
       </div>
       <div className="landing-home">
         <button onClick={handleSignIn} className="landing-home-button">Iniciar sesión</button>
