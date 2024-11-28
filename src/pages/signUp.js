@@ -56,7 +56,7 @@ const SignUpPage = () => {
       <div className="form-window">
         <h2>Registrarse</h2>
         <BasicForm fields={fields} onSubmit={handleSignUp} />
-        {error && <p style={{ color: 'red', maxWidth: '255px', textAlign: 'center' }}>{error}</p>}
+        {error && <p style={{ color: 'red', maxWidth: '255px', textAlign: 'center', margin: 'auto', marginTop: '10px' }}>{error}</p>}
         <p>Ya estás registrado? <a href="/sign-in" className="link">Iniciar sesión</a></p>
       </div>
     </div>

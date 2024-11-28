@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import Table from '../table/table';
 import AddOpinionModal from '../addOpinionButton/addOpinionModal';
+import SeeOpinionModal from '../addOpinionButton/seeOpinionModal';
 import './playerPage.css';
 import { API_URL } from '../../utils';
 import LoadingSpinner from '../loadingSpinner/loadingSpinner';
@@ -10,6 +11,7 @@ function PlayerPage() {
     const { playerId } = useParams();
     const [playerData, setPlayerData] = useState({ foto: '', nombre: '', posicion: '', numero: '' });
     const [opinions, setOpinions] = useState([]);
+    const [selectedOpinion, setSelectedOpinion] = useState(null);
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [error, setError] = useState(null);
     const [loading, setLoading] = useState(true);
@@ -17,14 +19,21 @@ function PlayerPage() {
     const fetchOpinions = async () => {
         setLoading(true);
         try {
-            const opinionsResponse = await fetch(`${API_URL}/players/opinions/${playerId}`);
+            const opinionsResponse = await fetch(`${API_URL}/players/${playerId}/opinions`);
             if (!opinionsResponse.ok) {
                 throw new Error('Error fetching opinions');
             }
             const opinionsData = await opinionsResponse.json();
-            setOpinions(opinionsData);
 
-            console.log(opinionsData);
+            const formattedOpinions = opinionsData.map(opinion => ({
+                created_at: opinion.created_at,
+                id: opinion.id,
+                comentario: opinion.opinion_text,
+                player_id: opinion.player_id,
+                puntuacion: opinion.rating,
+                user_id: opinion.user_id
+            }));
+            setOpinions(formattedOpinions);
         } catch (err) {
             setError(err.message);
         } finally {
@@ -93,9 +102,16 @@ function PlayerPage() {
         }
     };
 
+    const handleOpinionClick = (opinion) => {
+        setSelectedOpinion(opinion);
+    }
+
+    const closeOpinionForm = () => {
+        setSelectedOpinion(null);
+    };
+
     const opinionColumns = [
-        { name: 'Usuario', isImage: false },
-        { name: 'Opinión', isImage: false },
+        { name: 'Comentario', isImage: false },
         { name: 'Puntuación', isImage: false },
     ];
 
@@ -120,7 +136,7 @@ function PlayerPage() {
             <Table 
                 data={opinions} 
                 columns={opinionColumns} 
-                onRowClick={() => {}} 
+                onRowClick={handleOpinionClick} 
             />
 
             <button 
@@ -134,6 +150,12 @@ function PlayerPage() {
                 isOpen={isModalOpen}
                 onClose={() => setIsModalOpen(false)}
                 onSubmit={handleSubmit}
+            />
+
+            <SeeOpinionModal
+                opinion={selectedOpinion}
+                onChange={setSelectedOpinion}
+                onClose={closeOpinionForm}
             />
         </section>
     );

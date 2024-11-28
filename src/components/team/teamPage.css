@@ -6,6 +6,36 @@
     min-height: 100vh;
 }
 
+.display-table-options {
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+    width: 100%;
+    max-width: 400px;
+    margin-bottom: 20px;
+}
+
+.display-table-option {
+    margin-top: 15px;
+    background-color: #1ba727cc;
+    padding: 10px 40px;
+    font-size: 16px;
+    border: 1px solid;
+    border-radius: 5px;
+}
+
+.display-table-option:hover {
+    cursor: pointer;
+    transition: background-color 0.3s, transform 0.2s;
+}
+
+.display-table-option.active {
+    background-color: #0d745a33;
+    border: 1px solid #0d745a;
+    color: white;
+    cursor: pointer;
+}
+
 .team-header {
     display: flex;
     flex-direction: column;

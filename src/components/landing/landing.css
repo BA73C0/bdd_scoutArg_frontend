@@ -17,7 +17,6 @@
   margin-bottom: 20px;
 }
 
-
 .logo-container {
   flex: 0 1 auto;
   text-align: center;
@@ -43,12 +42,11 @@
   font-size: 1.8em;
   color: #ffffff;
   max-width: 600px;
-  margin-top: 10px;
+  margin-right: 35px;
 }
 
 .title-container {
   font-size: 3em;
   color:#ffffff;
-  max-width: 600px;
-  margin-top: 10px;
+  margin-right: 35px;
 }
