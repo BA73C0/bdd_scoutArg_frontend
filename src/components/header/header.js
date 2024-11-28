@@ -6,12 +6,14 @@ import { faUser } from '@fortawesome/free-solid-svg-icons';
 import ProfileMenu from '../profileMenu/profileMenu';
 
 const Header = () => {
+    const user = JSON.parse(localStorage.getItem('current_user_data'));
+
     return (
         <header className="header">
             <Logo />
             <div className="user-info">
                 <FontAwesomeIcon icon={faUser}/>
-                {"Marta"}
+                {user.name}
                 <ProfileMenu />
             </div>
         </header>

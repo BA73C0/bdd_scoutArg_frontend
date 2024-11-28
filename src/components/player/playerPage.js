@@ -4,10 +4,9 @@ import Table from '../table/table';
 import AddOpinionModal from '../addOpinionButton/addOpinionModal';
 import './playerPage.css';
 import { API_URL } from '../../utils';
-import LoadingSpinner from '../loadingSpinner/loadingSpinner'
+import LoadingSpinner from '../loadingSpinner/loadingSpinner';
 
-
-function BodyHome() {
+function PlayerPage() {
     const { playerId } = useParams();
     const [playerData, setPlayerData] = useState({ foto: '', nombre: '', posicion: '', numero: '' });
     const [opinions, setOpinions] = useState([]);
@@ -15,10 +14,28 @@ function BodyHome() {
     const [error, setError] = useState(null);
     const [loading, setLoading] = useState(true);
 
+    const fetchOpinions = async () => {
+        setLoading(true);
+        try {
+            const opinionsResponse = await fetch(`${API_URL}/players/opinions/${playerId}`);
+            if (!opinionsResponse.ok) {
+                throw new Error('Error fetching opinions');
+            }
+            const opinionsData = await opinionsResponse.json();
+            setOpinions(opinionsData);
+
+            console.log(opinionsData);
+        } catch (err) {
+            setError(err.message);
+        } finally {
+            setLoading(false);
+        }
+    };
+
     useEffect(() => {
         const fetchPlayerData = async () => {
+            setLoading(true);
             try {
-                setLoading(true);
                 const playerResponse = await fetch(`${API_URL}/players/${playerId}`);
                 if (!playerResponse.ok) {
                     throw new Error('Error fetching player data');
@@ -33,30 +50,9 @@ function BodyHome() {
                     id: playerData.id,
                     edad: playerData.age,
                 };
-                
                 setPlayerData(formattedplayerData);
 
-                console.log(playerId);
-
-                const opinionsResponse = await fetch(`${API_URL}/players/opinions/${playerId}`);
-                if (!opinionsResponse.ok) {
-                    throw new Error('Error fetching opinions');
-                }
-
-                const opinionsData = await opinionsResponse.json();
-
-                console.log(opinionsData);
-
-                /*
-                const opinionsResponse = [
-                    { usuario: 'Usuario1', opinion: 'Gran arquero, muy seguro.' , puntuacion: 5},
-                    { usuario: 'Usuario2', opinion: 'Debe mejorar los reflejos.' , puntuacion: 3},
-                    { usuario: 'Usuario3', opinion: 'Excelente en penales.' , puntuacion: 4},
-                ];
-                */
-                setOpinions(opinionsResponse);
-
-
+                await fetchOpinions();
             } catch (err) {
                 setError(err.message);
             } finally {
@@ -65,31 +61,46 @@ function BodyHome() {
         };
 
         fetchPlayerData();
-    }, []);
+    }, [playerId]);
+
+    const handleSubmit = async (opinion, puntuacion) => {
+        const json = {
+            opinion_text: opinion,
+            rating: puntuacion,
+            player_id: playerId,
+            created_at: new Date().toISOString(),
+        };
+
+        const user = JSON.parse(localStorage.getItem('current_user'));
+
+        try {
+            const response = await fetch(`${API_URL}/players/opinions`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    Authorization: `Bearer ${user.token}`,
+                },
+                body: JSON.stringify(json),
+            });
+
+            if (response.ok) {
+                await fetchOpinions(); 
+            } else {
+                throw new Error('Error adding opinion');
+            }
+        } catch (err) {
+            setError(err.message);
+        }
+    };
 
     const opinionColumns = [
         { name: 'Usuario', isImage: false },
-        { name: 'Opinion', isImage: false },
+        { name: 'Opinión', isImage: false },
         { name: 'Puntuación', isImage: false },
     ];
 
-    const handleAddOpinion = (newOpinion, newPuntuacion) => {
-        const newOpinionEntry = {
-            usuario: 'Nuevo Usuario',
-            opinion: newOpinion,
-            puntuacion: newPuntuacion
-        };
-        setOpinions([...opinions, newOpinionEntry]); 
-    };
-
-    /*
-    const handleAddOpinion = (newOpinion) => {
-        setOpinions([...opinions, newOpinion]);
-    };
-    */
-
     if (loading) {
-        return <LoadingSpinner/>;
+        return <LoadingSpinner />;
     }
 
     return (
@@ -122,10 +133,10 @@ function BodyHome() {
             <AddOpinionModal 
                 isOpen={isModalOpen}
                 onClose={() => setIsModalOpen(false)}
-                onSubmit={handleAddOpinion}
+                onSubmit={handleSubmit}
             />
         </section>
     );
 }
 
-export default BodyHome;
+export default PlayerPage;

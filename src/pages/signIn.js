@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import BasicForm from '../components/basicForm/basicForm';
 import { useNavigate } from 'react-router-dom';
 import { API_URL } from '../utils';
@@ -6,6 +6,19 @@ import { API_URL } from '../utils';
 const SignInPage = () => {
   const navigate = useNavigate();
   const [error, setError] = useState(null);
+
+  const getUser = async () => {
+    const currentUser = JSON.parse(localStorage.getItem('current_user'));
+
+    const response = await fetch(`${API_URL}/users/${currentUser.id}`)
+    if (!response.ok) {
+      throw new Error('Error al obtener el usuario');
+    }
+    const user = await response.json();
+
+    localStorage.setItem('current_user_data', JSON.stringify(user));
+  }
+
 
   const handleSignIn = async (formData) => {
     const { email, password } = formData;
@@ -29,11 +42,14 @@ const SignInPage = () => {
         },
       });
 
-      await response.json();
+      const access_token = await response.json();
 
       if (!response.ok) {
         throw new Error('Error en el inicio de sesión');
       } else {
+        localStorage.setItem('current_user', JSON.stringify(access_token));
+
+        await getUser();
         navigate('/teams');
       }
     } catch (error) {

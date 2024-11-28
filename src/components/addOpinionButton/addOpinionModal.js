@@ -5,44 +5,16 @@ function AddOpinionModal({ isOpen, onClose, onSubmit }) {
     const [opinion, setOpinion] = useState('');
     const [puntuacion, setPuntuacion] = useState(1);
 
-    const handleSubmit = (e) => {
-        e.preventDefault();
-        if (opinion.trim()) {
-            onSubmit(opinion, puntuacion);
-            setOpinion('');
-            setPuntuacion(1);
-            onClose();
-        }
-    };
-
-    /*
-    const handleSubmit = async (e) => {
-        e.preventDefault();
-        if (opinion.trim()) {
-            // Aquí guardamos la nueva opinión en la base de datos
-            const response = await fetch('https://api.ejemplo.com/opinions', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({ opinion, puntuacion }),
-            });
-
-            if (response.ok) {
-                const newOpinion = await response.json();
-                onSubmit(newOpinion);  // Pasar la nueva opinión al componente principal
-                setOpinion('');
-                setPuntuacion(1);
-                onClose();
-            } else {
-                console.error('Error guardando la opinión');
-            }
-        }
-    };
-    */ 
-
     const handleStarClick = (rating) => {
         setPuntuacion(rating);
+    };
+
+    const handleSubmit = (e) => {
+        e.preventDefault();
+        onSubmit(opinion, puntuacion);
+        setOpinion('');
+        setPuntuacion(1);
+        onClose();
     };
 
     if (!isOpen) return null;

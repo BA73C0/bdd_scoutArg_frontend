@@ -1,4 +1,3 @@
-// src/components/BasicForm.js
 import React, { useState } from 'react';
 import './basicForm.css';
 

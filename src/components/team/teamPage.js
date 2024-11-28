@@ -12,7 +12,6 @@ function TeamPage() {
     const [players, setPlayers] = useState([]);
     const [filteredPlayers, setFilteredPlayers] = useState([]);
     const [search, setSearch] = useState('');
-    const [error, setError] = useState(null);
     const [loading, setLoading] = useState(true);
     const navigate = useNavigate();
 
@@ -57,7 +56,7 @@ function TeamPage() {
                 setFilteredPlayers(formattedPlayers);
                 setTeamData(formattedTeamData);
             } catch (err) {
-                setError(err.message);
+                throw err;
             } finally {
                 setLoading(false);
             }
