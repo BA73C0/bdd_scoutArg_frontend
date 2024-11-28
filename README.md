@@ -2,11 +2,6 @@
 
 - [ ] LogOut
     - En el header ya hay un boton pero no anda
-- [ ] Elegir un tipo de letra para la app
-- [ ] Agregar css para errores
-    - Por ahora solo hay en SignUp y SignIn, pero habria q hacerlo para todas las pags con errores
-- [ ] Agregar opiniones de equipo
-    - Deje una posible forma en ds (Brainstorm)
 - [ ] Faltan botones
     - [ ] Agregar equipo en Home
     - [ ] Borrar equipo en Team
