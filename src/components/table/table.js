@@ -11,7 +11,7 @@ function StarRating({ rating }) {
     return <div>{stars}</div>;
 }
 
-function Table({ data, columns, onRowClick }) {
+function Table({ data, columns, onRowClick, onImageError }) {
     return (
         <div className="table-container">
             <table className="table">
@@ -37,6 +37,7 @@ function Table({ data, columns, onRowClick }) {
                                                 <img 
                                                     src={row[col.name.toLowerCase()]} 
                                                     alt={col.name} 
+                                                    onError={onImageError}
                                                 />
                                             </div>
                                         ) : (

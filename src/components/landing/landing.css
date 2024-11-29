@@ -11,7 +11,7 @@
 .landing-home {
   display: flex;
   align-items: center;
-  justify-content: center;  /* Centra los elementos horizontalmente */
+  justify-content: center;
   width: 100%;
   max-width: 800px;
   margin-bottom: 20px;
@@ -20,7 +20,7 @@
 .logo-container {
   flex: 0 1 auto;
   text-align: center;
-  margin: 0 20px; /* Espacio entre el logo y los botones */
+  margin: 0 20px;
 }
 
 .landing-home-button {
@@ -28,7 +28,7 @@
   color: white;
   border-radius: 10px;
   border: 5px solid var(--footer-background-color);
-  padding: 10px 40px;
+  padding: 0px 40px;
   cursor: pointer;
   transition: background-color 0.3s ease;
   height: 70px;

@@ -5,7 +5,7 @@ import { useNavigate } from 'react-router-dom';
 import './bodyHome.css';
 import { API_URL } from '../../utils';
 import LoadingSpinner from '../loadingSpinner/loadingSpinner'
-
+import { useSupabase } from '../../supabaseContext'
 
 function BodyHome() {
     const [teams, setTeams] = useState([]);
@@ -13,6 +13,7 @@ function BodyHome() {
     const [search, setSearch] = useState('');
     const [loading, setLoading] = useState(true);
     const navigate = useNavigate()
+    const { supabase } = useSupabase();
 
     useEffect(() => {
         const fetchTeams = async () => {
@@ -23,10 +24,16 @@ function BodyHome() {
                     throw new Error('Error al obtener los equipos');
                 }
                 const data = await response.json();
-                const formattedTeams = data.map(team => ({
-                    escudo: team.photo || '/logo512.png',
-                    nombre: team.name,
-                    team_id: team.id
+                const formattedTeams = await Promise.all(data.map(async (team) => {
+                    const { data: imageData } = await supabase.storage
+                        .from("team-pictures")
+                        .getPublicUrl(team.id + '.png');
+                    
+                    return {
+                        escudo: imageData.publicUrl,
+                        nombre: team.name,
+                        team_id: team.id,
+                    };
                 }));
 
                 setTeams(formattedTeams);
@@ -73,6 +80,7 @@ function BodyHome() {
                 data={filteredTeams} 
                 columns={columns} 
                 onRowClick={handleRowClick} 
+                onImageError={(e) => { e.target.src = '/logo512.png'; }}
             />
         </section>
     );

@@ -6,9 +6,11 @@ import LoadingSpinner from '../loadingSpinner/loadingSpinner';
 import AddOpinionModal from '../addOpinionButton/addOpinionModal';
 import './teamPage.css';
 import { API_URL } from '../../utils';
+import { useSupabase } from '../../supabaseContext'
 
 function TeamPage() {
     const { teamId } = useParams();
+    const { supabase } = useSupabase();
     const [teamData, setTeamData] = useState({ nombre: '', escudo: '' });
     const [players, setPlayers] = useState([]);
     const [filteredPlayers, setFilteredPlayers] = useState([]);
@@ -50,8 +52,13 @@ function TeamPage() {
                 const teamResponse = await fetch(`${API_URL}/teams/${teamId}`);
                 if (!teamResponse.ok) throw new Error('Error fetching team data');
                 const teamData = await teamResponse.json();
+                
+                const { data } = await supabase.storage
+                    .from("team-pictures")
+                    .getPublicUrl(teamData.id + '.png');
+
                 setTeamData({
-                    escudo: teamData.photo || '/logo512.png',
+                    escudo: data.publicUrl,
                     nombre: teamData.name,
                 });
 
@@ -69,14 +76,20 @@ function TeamPage() {
 
                 const playerData = await playersRes.json();
 
-                const formattedPlayers = [playerData].map(player => ({
+                const formattedPlayers = await Promise.all([playerData].map(async (player) => {
+                    const { data: imageData } = await supabase.storage
+                        .from("player-pictures")
+                        .getPublicUrl(player.id + '.png');
+
+                    return {
                     edad: player.age,
                     nombre: player.name,
                     numero: player.number,
                     posicion: player.position,
                     id: player.id,
-                    foto: '/jugador.png',
-                }));
+                    foto: imageData.publicUrl,
+                }}));
+
                 setPlayers(formattedPlayers);
                 setFilteredPlayers(formattedPlayers);
 
@@ -156,6 +169,7 @@ function TeamPage() {
                     src={teamData.escudo} 
                     alt={`${teamData.nombre} escudo`}
                     className="team-logo"
+                    onError={(e) => { e.target.src = '/logo512.png'; }}
                 />
                 <h1 className="team-name">{teamData.nombre}</h1>
             </header>
@@ -204,6 +218,7 @@ function TeamPage() {
                         data={filteredPlayers} 
                         columns={playerColumns} 
                         onRowClick={handlePlayerClick} 
+                        onImageError={(e) => { e.target.src = '/jugador.png'; }}
                     />
                 </>
             )}

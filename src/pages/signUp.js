@@ -1,4 +1,4 @@
-import { API_URL } from '../utils';
+import { API_URL, HandleLogIn } from '../utils';
 import React, { useState } from 'react';
 import BasicForm from '../components/basicForm/basicForm';
 import { useNavigate } from 'react-router-dom';
@@ -15,11 +15,11 @@ const SignUpPage = () => {
       return
     }
 
-    const json = {};
-
-    json["email"] = email;
-    json["name"] = username;
-    json["password"] = password;
+    const json = {
+      email: email,
+      name: username,
+      password: password,
+    };
 
     try {
       const registerReponse = await fetch(`${API_URL}/users` , {
@@ -39,9 +39,16 @@ const SignUpPage = () => {
     } catch (error) {
       setError('Error en el registro');
     } finally {
-      navigate('/teams');
+      const json = {
+        email: email,
+        password: password,
+      };
+  
+      const success = await HandleLogIn(json, setError);
+      if (success) {
+        navigate('/teams');
+      }
     }
-
   };
 
   const fields = [

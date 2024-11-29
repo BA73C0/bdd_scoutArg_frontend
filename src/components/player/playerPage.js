@@ -6,9 +6,11 @@ import SeeOpinionModal from '../addOpinionButton/seeOpinionModal';
 import './playerPage.css';
 import { API_URL } from '../../utils';
 import LoadingSpinner from '../loadingSpinner/loadingSpinner';
+import { useSupabase } from '../../supabaseContext'
 
 function PlayerPage() {
     const { playerId } = useParams();
+    const { supabase } = useSupabase();
     const [playerData, setPlayerData] = useState({ foto: '', nombre: '', posicion: '', numero: '' });
     const [opinions, setOpinions] = useState([]);
     const [selectedOpinion, setSelectedOpinion] = useState(null);
@@ -51,15 +53,18 @@ function PlayerPage() {
                 }
                 const playerData = await playerResponse.json();
 
-                const formattedplayerData = {
-                    foto: playerData.photo || '/jugador.png',
+                const { data } = await supabase.storage
+                    .from("player-pictures")
+                    .getPublicUrl(playerData.id + '.png');
+
+                setPlayerData({
+                    foto: data.publicUrl,
                     nombre: playerData.name,
                     posicion: playerData.position,
                     numero: playerData.number,
                     id: playerData.id,
                     edad: playerData.age,
-                };
-                setPlayerData(formattedplayerData);
+                });
 
                 await fetchOpinions();
             } catch (err) {
@@ -126,6 +131,7 @@ function PlayerPage() {
                     src={playerData.foto}
                     alt={`${playerData.nombre} foto`}
                     className="player-picture"
+                    onError={(e) => { e.target.src = '/jugador.png'; }}
                 />
                 <h1 className="player-name">{playerData.nombre}</h1>
                 <div className="player-details">
