@@ -45,7 +45,7 @@ function AddOpinionModal({ isOpen, onClose, onSubmit }) {
                         </div>
                     </div>
                     <button type="submit">Enviar Opinión</button>
-                    <button type="button" onClick={onClose}>Cerrar</button>
+                    <button type="button" onClick={onClose}>Cancelar</button>
                 </form>
             </div>
         </div>

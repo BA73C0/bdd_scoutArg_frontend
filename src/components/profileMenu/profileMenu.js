@@ -3,9 +3,10 @@ import { useNavigate } from 'react-router-dom';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faEllipsis } from "@fortawesome/free-solid-svg-icons";
 import './profileMenu.css'
-// import { LogOut } from "../../utils"
+import { useSupabase } from '../../supabaseContext';
 
 function ProfileMenu() {
+    const { logout } = useSupabase();
     const [isMenuOpen, setIsMenuOpen] = useState(false);
     const navigate = useNavigate();
 
@@ -14,9 +15,9 @@ function ProfileMenu() {
         console.log('Menu state:', !isMenuOpen)
     };
 
-    const logout = async () => {
+    const handleLogOut = async () => {
+        logout();
         navigate('/');
-        // await LogOut(setIsLoading, setError, navigate);
     };
 
     return (
@@ -28,7 +29,7 @@ function ProfileMenu() {
 
                 {isMenuOpen && (
                     <div className="menu-dropdown">
-                        <button onClick={logout} className="menu-item">Logout</button>
+                        <button onClick={handleLogOut} className="menu-item">Logout</button>
                     </div>
                 )}
             </div>

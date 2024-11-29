@@ -6,7 +6,7 @@ function Team() {
     <div className ="app-container">
         <TeamPage className="body-container"/>
     </div>
-)
+  )
 }
 
 export default Team;

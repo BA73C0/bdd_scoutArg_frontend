@@ -4,7 +4,7 @@ import Table from '../table/table';
 import AddOpinionModal from '../addOpinionButton/addOpinionModal';
 import SeeOpinionModal from '../addOpinionButton/seeOpinionModal';
 import './playerPage.css';
-import { API_URL } from '../../utils';
+import { API_URL, ADMIN_ID } from '../../utils';
 import LoadingSpinner from '../loadingSpinner/loadingSpinner';
 import { useSupabase } from '../../supabaseContext'
 
@@ -163,8 +163,52 @@ function PlayerPage() {
                 onChange={setSelectedOpinion}
                 onClose={closeOpinionForm}
             />
+
+            <AdminDeletePlayerModal />
+            <AdminEditPlayerModal />
         </section>
     );
 }
+
+function AdminDeletePlayerModal() {
+    const user = JSON.parse(localStorage.getItem('current_user'));
+    // DELETE de un player
+
+    if (user.id !== ADMIN_ID) {
+        return null;
+    } else {
+        // reutilizar boton de agregar equipo/jugador
+
+        // hay que hacerle el/los css en index.css
+        return (
+            <>
+                <button>Borrar jugador</button>
+
+                /* Modal con una validacion de "estoy seguro que quiero borrar" */
+            </>
+        );
+    }
+}
+
+function AdminEditPlayerModal() {
+    const user = JSON.parse(localStorage.getItem('current_user'));
+    // PATCH de un player
+
+    if (user.id !== ADMIN_ID) {
+        return null;
+    } else {
+        // reutilizar boton de agregar equipo/jugador
+
+        // hay que hacerle el/los css en index.css
+        return (
+            <>
+                <button>Editar jugador</button>
+
+                /* Modal con form para editar jugador  */
+            </>
+        );
+    }
+}
+
 
 export default PlayerPage;

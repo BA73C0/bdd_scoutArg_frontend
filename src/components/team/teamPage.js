@@ -5,7 +5,7 @@ import SearchBar from '../searchBar/searchBar';
 import LoadingSpinner from '../loadingSpinner/loadingSpinner';
 import AddOpinionModal from '../addOpinionButton/addOpinionModal';
 import './teamPage.css';
-import { API_URL } from '../../utils';
+import { API_URL, ADMIN_ID } from '../../utils';
 import { useSupabase } from '../../supabaseContext'
 
 function TeamPage() {
@@ -120,14 +120,14 @@ function TeamPage() {
     }
 
     const handleOpinonSubmit = async (opinion, puntuacion) => {
+        const user = JSON.parse(localStorage.getItem('current_user'));
         const json = {
+            user_id: user.id,
             opinion_text: opinion,
             rating: puntuacion,
             team_id: teamId,
-            created_at: new Date().toISOString(),
+            created_at: new Date().toISOString()
         };
-
-        const user = JSON.parse(localStorage.getItem('current_user'));
 
         try {
             const response = await fetch(`${API_URL}/teams/opinions`, {
@@ -157,7 +157,6 @@ function TeamPage() {
         { name: 'Edad', isImage: false },
     ];
     const opinionColumns = [
-        { name: 'Autor', isImage: false },
         { name: 'Comentario', isImage: false },
         { name: 'Puntuación', isImage: false },
     ];
@@ -220,10 +219,75 @@ function TeamPage() {
                         onRowClick={handlePlayerClick} 
                         onImageError={(e) => { e.target.src = '/jugador.png'; }}
                     />
+
+                    <AdminDeleteTeamModal />
+                    <AdminEditTeamModal />
+                    <AdminAddPlayerToTeamModal />
                 </>
             )}
         </section>
     );
 }
+
+function AdminDeleteTeamModal() {
+    const user = JSON.parse(localStorage.getItem('current_user'));
+    // DELETE de un team
+
+    if (user.id !== ADMIN_ID) {
+        return null;
+    } else {
+        // reutilizar boton de agregar equipo/jugador
+
+        // hay que hacerle el/los css en index.css
+        return (
+            <>
+                <button>Borrar equipo</button>
+
+                /* Modal con una validacion de "estoy seguro que quiero borrar" */
+            </>
+        );
+    }
+}
+
+function AdminEditTeamModal() {
+    const user = JSON.parse(localStorage.getItem('current_user'));
+    // PATCH de un team
+
+    if (user.id !== ADMIN_ID) {
+        return null;
+    } else {
+        // reutilizar boton de agregar equipo/jugador
+
+        // hay que hacerle el/los css en index.css
+        return (
+            <>
+                <button>Editar equipo</button>
+
+                /* Modal con form para editar equipo  */
+            </>
+        );
+    }
+}
+
+function AdminAddPlayerToTeamModal() {
+    const user = JSON.parse(localStorage.getItem('current_user'));
+    // PATCH de un team
+
+    if (user.id !== ADMIN_ID) {
+        return null;
+    } else {
+        // reutilizar boton de agregar equipo/jugador
+
+        // hay que hacerle el/los css en index.css
+        return (
+            <>
+                <button>Agregar jugador</button>
+
+                /* Modal con form para agregar un jugador al equipo  */
+            </>
+        );
+    }
+}
+
 
 export default TeamPage;

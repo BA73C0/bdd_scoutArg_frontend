@@ -33,8 +33,8 @@ function SeeOpinionModal({ opinion, onChange, onClose, onSubmit }) {
                 </div>
 
                 <div className="modal-buttons">
-                    <button onClick={onClose}>Cancelar</button>
                     <button onClick={() => onSubmit(opinion)}>Guardar Cambios</button>
+                    <button onClick={onClose}>Cancelar</button>
                 </div>
             </div>
         </div>

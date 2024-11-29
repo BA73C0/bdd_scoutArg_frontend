@@ -1,4 +1,5 @@
 export const API_URL = process.env.REACT_APP_API_URL;
+export const ADMIN_ID = process.env.REACT_APP_ADMIN_ID;
 
 const getUser = async () => {
     const currentUser = JSON.parse(localStorage.getItem('current_user'));

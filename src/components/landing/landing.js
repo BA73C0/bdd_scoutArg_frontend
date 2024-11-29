@@ -1,9 +1,17 @@
 import React from 'react';
 import "./landing.css"
 import { useNavigate } from 'react-router-dom';
+import { useSupabase } from '../../supabaseContext';
 
 function Landing() {
+  const { logout } = useSupabase();
   const navigate = useNavigate();
+
+  const user = JSON.parse(localStorage.getItem('current_user_data'));
+  if (user) {
+    logout();
+    console.log(user);
+  }
   
   const handleSignIn = () => {
     navigate("/sign-in");

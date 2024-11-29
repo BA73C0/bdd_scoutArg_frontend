@@ -3,7 +3,7 @@ import Table from '../table/table';
 import SearchBar from '../searchBar/searchBar';
 import { useNavigate } from 'react-router-dom';
 import './bodyHome.css';
-import { API_URL } from '../../utils';
+import { API_URL, ADMIN_ID } from '../../utils';
 import LoadingSpinner from '../loadingSpinner/loadingSpinner'
 import { useSupabase } from '../../supabaseContext'
 
@@ -82,8 +82,29 @@ function BodyHome() {
                 onRowClick={handleRowClick} 
                 onImageError={(e) => { e.target.src = '/logo512.png'; }}
             />
+            <AdminAddTeamModal />
         </section>
     );
+}
+
+function AdminAddTeamModal() {
+    const user = JSON.parse(localStorage.getItem('current_user'));
+    // POST de un team
+
+    if (user.id !== ADMIN_ID) {
+        return null;
+    } else {
+        // reutilizar boton de agregar equipo/jugador
+
+        // hay que hacerle el/los css en index.css
+        return (
+            <>
+                <button>Añadir equipo</button>
+
+                /* Modal con el form para añadir equipo */
+            </>
+        );
+    }
 }
 
 export default BodyHome;

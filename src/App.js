@@ -8,16 +8,8 @@ import Team from './pages/team';
 import Player from './pages/player';
 import Header from './components/header/header';
 import Footer from './components/footer/footer';
-import { useSupabase } from './supabaseContext';
 
 function App() {
-  const { logout } = useSupabase();
-
-  const user = JSON.parse(localStorage.getItem('current_user_data'));
-  if (user) {
-    //logout();
-  }
-  
   return (
     <BrowserRouter>
       <ConditionalHeader /> 
