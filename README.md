@@ -2,7 +2,7 @@
 
 - [ ] LogOut
     - En el header ya hay un boton pero no anda
-- [ ] Faltan botones
+- [ ] Faltan botones (deberian ir en Adimin)
     - [ ] Agregar equipo en Home
     - [ ] Borrar equipo en Team
     - [ ] Actualizar equipo en Team
