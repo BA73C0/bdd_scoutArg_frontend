@@ -44,6 +44,29 @@ function TeamPage() {
         }
     };
 
+    const onDelete = async () => {
+        try {
+            const user = JSON.parse(localStorage.getItem('current_user'));
+            const response = await fetch(`${API_URL}/teams/${teamId}`, {
+                method: 'DELETE',
+                headers: {
+                    'Content-Type': 'application/json',
+                    Authorization: `Bearer ${user.token}`,
+                },
+                body: JSON.stringify(teamId),
+            });
+            
+            if (!response.ok) {
+                throw new Error('Error al eliminar el equipo');
+            }
+    
+            alert('Equipo borrado exitosamente!!'); 
+            navigate('/teams'); 
+        } catch (error) {
+            console.error('Error al eliminar el equipo:', error);
+        }
+    };
+
     useEffect(() => {
         const fetchData = async () => {
             setLoading(true);
@@ -220,33 +243,56 @@ function TeamPage() {
                         onImageError={(e) => { e.target.src = '/jugador.png'; }}
                     />
 
-                    <AdminDeleteTeamModal />
-                    <AdminEditTeamModal />
-                    <AdminAddPlayerToTeamModal />
+                    <div className="button-container">
+                        <AdminDeleteTeamModal
+                        id = {teamId}
+                        nombre = {teamData.nombre}
+                        onDelete= {onDelete}
+                        />
+                        <AdminEditTeamModal />
+                        <AdminAddPlayerToTeamModal />
+                    </div>
                 </>
             )}
         </section>
     );
 }
 
-function AdminDeleteTeamModal() {
+
+
+function AdminDeleteTeamModal({id, nombre, onDelete}) {
     const user = JSON.parse(localStorage.getItem('current_user'));
-    // DELETE de un team
+    const [isModalOpen, setIsModalOpen] = useState(false);
 
     if (user.id !== ADMIN_ID) {
         return null;
-    } else {
-        // reutilizar boton de agregar equipo/jugador
-
-        // hay que hacerle el/los css en index.css
-        return (
-            <>
-                <button>Borrar equipo</button>
-
-                /* Modal con una validacion de "estoy seguro que quiero borrar" */
-            </>
-        );
     }
+    
+
+    const openModal = () => setIsModalOpen(true);
+    const closeModal = () => setIsModalOpen(false);
+    const confirmDelete = () => {
+        console.log(id);
+        closeModal(); 
+    };
+
+    return (
+        <>
+            <button onClick={openModal}>Borrar equipo</button>
+
+            {isModalOpen && (
+                <div className="modal-overlay">
+                    <div className="modal-content">
+                        <p>¿Está seguro que quiere borrar a {nombre}?</p>
+                        <div className="modal-actions">
+                            <button className="confirm-button" onClick={onDelete}>Sí</button>
+                            <button className="cancel-button" onClick={closeModal}>Cancelar</button>
+                        </div>
+                    </div>
+                </div>
+            )}
+        </>
+    );
 }
 
 function AdminEditTeamModal() {
@@ -263,8 +309,8 @@ function AdminEditTeamModal() {
             <>
                 <button>Editar equipo</button>
 
-                /* Modal con form para editar equipo  */
             </>
+                /* Modal con form para editar equipo  */
         );
     }
 }
@@ -283,8 +329,8 @@ function AdminAddPlayerToTeamModal() {
             <>
                 <button>Agregar jugador</button>
 
-                /* Modal con form para agregar un jugador al equipo  */
             </>
+                /* Modal con form para agregar un jugador al equipo  */
         );
     }
 }

@@ -1,6 +1,6 @@
 ## Todo
 
-- [ ] LogOut
+- [x] LogOut
     - En el header ya hay un boton pero no anda
 - [ ] Faltan botones (deberian ir en Adimin)
     - [ ] Agregar equipo en Home

@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { useParams } from 'react-router-dom';
+import { useParams, useNavigate } from 'react-router-dom';
 import Table from '../table/table';
 import AddOpinionModal from '../addOpinionButton/addOpinionModal';
 import SeeOpinionModal from '../addOpinionButton/seeOpinionModal';
@@ -11,6 +11,7 @@ import { useSupabase } from '../../supabaseContext'
 function PlayerPage() {
     const { playerId } = useParams();
     const { supabase } = useSupabase();
+    const navigate = useNavigate();
     const [playerData, setPlayerData] = useState({ foto: '', nombre: '', posicion: '', numero: '' });
     const [opinions, setOpinions] = useState([]);
     const [selectedOpinion, setSelectedOpinion] = useState(null);
@@ -40,6 +41,27 @@ function PlayerPage() {
             setError(err.message);
         } finally {
             setLoading(false);
+        }
+    };
+
+    const onDelete = async () => {
+        try {
+            const user = JSON.parse(localStorage.getItem('current_user'));
+            const response = await fetch(`${API_URL}/players/${playerId}`, {
+                method: 'DELETE',
+                body: JSON.stringify(playerId),
+                headers: {
+                    Authorization: `Bearer ${user.token}`,
+                },
+            });
+    
+            if (!response.ok) {
+                throw new Error('Error al eliminar el equipo');
+            }
+            
+            navigate('/teams'); 
+        } catch (error) {
+            console.error('Error al eliminar el equipo:', error);
         }
     };
 
@@ -163,31 +185,51 @@ function PlayerPage() {
                 onChange={setSelectedOpinion}
                 onClose={closeOpinionForm}
             />
-
-            <AdminDeletePlayerModal />
-            <AdminEditPlayerModal />
+            <div  className="button-container">
+                <AdminDeletePlayerModal
+                id = {playerId}
+                nombre = {playerData.nombre}
+                
+                />
+                <AdminEditPlayerModal />
+            </div>
         </section>
     );
 }
 
-function AdminDeletePlayerModal() {
+function AdminDeletePlayerModal({id, nombre, onDelete}) {
     const user = JSON.parse(localStorage.getItem('current_user'));
-    // DELETE de un player
+    const [isModalOpen, setIsModalOpen] = useState(false);
 
     if (user.id !== ADMIN_ID) {
         return null;
-    } else {
-        // reutilizar boton de agregar equipo/jugador
-
-        // hay que hacerle el/los css en index.css
-        return (
-            <>
-                <button>Borrar jugador</button>
-
-                /* Modal con una validacion de "estoy seguro que quiero borrar" */
-            </>
-        );
     }
+    
+
+    const openModal = () => setIsModalOpen(true);
+    const closeModal = () => setIsModalOpen(false);
+    const confirmDelete = () => {
+        console.log(id);
+        closeModal(); 
+    };
+
+    return (
+        <>
+            <button onClick={openModal}>Borrar Jugador</button>
+
+            {isModalOpen && (
+                <div className="modal-overlay">
+                    <div className="modal-content">
+                        <p>¿Está seguro que quiere borrar a {nombre}?</p>
+                        <div className="modal-actions">
+                            <button className="confirm-button" onClick={onDelete}>Sí</button>
+                            <button className="cancel-button" onClick={closeModal}>Cancelar</button>
+                        </div>
+                    </div>
+                </div>
+            )}
+        </>
+    );
 }
 
 function AdminEditPlayerModal() {
@@ -204,8 +246,8 @@ function AdminEditPlayerModal() {
             <>
                 <button>Editar jugador</button>
 
-                /* Modal con form para editar jugador  */
             </>
+                /* Modal con form para editar jugador  */
         );
     }
 }

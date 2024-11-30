@@ -58,3 +58,29 @@
 .admin-add-team-button {
     padding: 20px;
 }
+
+.button-container {
+    display: flex;          
+    justify-content: flex-start; 
+    gap: 25px;             
+    margin-top: 20px;      
+}
+
+.modal-actions {
+    display: flex;
+    justify-content: center;
+    gap: 10px; 
+}
+
+.confirm-button {
+    background-color: #d9534f; 
+    color: white;
+}
+
+.cancel-button {
+    padding: 8px 16px;
+    border: none;
+    cursor: pointer;
+    background-color: #4CAF50; 
+    color: white;
+}

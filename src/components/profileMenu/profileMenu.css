@@ -13,14 +13,15 @@
 
 .menu-dropdown {
     position: absolute;
-    top: 100%;
+    top: 100px; 
     right: 0;
-    background-color: var(--navbar-background-color);
-    color: white;
-    border: 1px solid var(--button-background-color);
-    border-radius: 4px;
-    z-index: 1;
+    background-color: #004906;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    z-index: 1000;
     width: 150px;
+    display: block;
 }
 
 .menu-item {

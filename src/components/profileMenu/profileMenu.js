@@ -26,12 +26,12 @@ function ProfileMenu() {
                 <button onClick={toggleMenu} className="menu-button">
                     <FontAwesomeIcon icon={faEllipsis} />
                 </button>
-
                 {isMenuOpen && (
                     <div className="menu-dropdown">
                         <button onClick={handleLogOut} className="menu-item">Logout</button>
                     </div>
                 )}
+
             </div>
         </div>
     );
