@@ -2,12 +2,13 @@
 
 - [x] LogOut
     - En el header ya hay un boton pero no anda
-- [ ] Faltan botones (deberian ir en Adimin)
+- [ ] Agregar funcionalidad y estilo a los botones
+    - El estilo traten de hacerlo en index asi se usa para todos los botones
     - [ ] Agregar equipo en Home
     - [ ] Borrar equipo en Team
-    - [ ] Actualizar equipo en Team
-    - [ ] Agregar jugador en Team
-    - [ ] Actualizar jugador en Player
+    - [ ] Editar equipo en Team
+    - [ ] Agregar jugador en Team (Hay q chequear con el back)
+    - [ ] Editar jugador en Player
 - [ ] Corregir errores de sintaxis y de importaciones no usadas
 - [ ] Arregar riesgos de npm ¿?
 - [ ] Terminar/Corregir SeeOpinionModel
