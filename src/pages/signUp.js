@@ -2,8 +2,10 @@ import { API_URL, HandleLogIn } from '../utils';
 import React, { useState } from 'react';
 import BasicForm from '../components/basicForm/basicForm';
 import { useNavigate } from 'react-router-dom';
+import { useSupabase } from '../supabaseContext';
 
 const SignUpPage = () => {
+  const { login } = useSupabase();
   const navigate = useNavigate();
   const [error, setError] = useState(null);
   
@@ -46,6 +48,7 @@ const SignUpPage = () => {
   
       const success = await HandleLogIn(json, setError);
       if (success) {
+        login(JSON.parse(localStorage.getItem('current_user')));
         navigate('/teams');
       }
     }

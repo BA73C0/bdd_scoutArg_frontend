@@ -28,7 +28,7 @@ function BodyHome() {
                 const formattedTeams = await Promise.all(data.map(async (team) => {
                     const { data: imageData } = await supabase.storage
                         .from("team-pictures")
-                        .getPublicUrl(team.id + '.png');
+                        .getPublicUrl(team.id);
                     
                     return {
                         escudo: imageData.publicUrl,
@@ -104,6 +104,8 @@ function AdminAddTeamModal() {
             setError('Por favor selecciona un archivo para subir');
             return;
         }
+
+        console.log("user", user);
 
         try {
             const { data } = await supabase.storage
@@ -181,6 +183,7 @@ function AdminAddTeamModal() {
                             fields={fields} 
                             onSubmit={handleAddTeam} 
                             onCancel={closeModal} 
+                            setFile={setFile}
                         />
                     </div>
                 </div>

@@ -45,55 +45,6 @@ function TeamPage() {
         }
     };
 
-    const onDelete = async () => {
-        const user = JSON.parse(localStorage.getItem('current_user'));
-        try {
-            const response = await fetch(`${API_URL}/teams/${teamId}`, {
-                method: 'DELETE',
-                headers: {
-                    'Content-Type': 'application/json',
-                    Authorization: `Bearer ${user.token}`,
-                },
-                body: JSON.stringify(teamId),
-            });
-            
-            if (!response.ok) {
-                throw new Error('Error al eliminar el equipo');
-            }
-    
-            alert('Equipo borrado exitosamente!!'); 
-            navigate('/teams'); 
-        } catch (error) {
-            console.error('Error al eliminar el equipo:', error);
-        }
-    };
-
-    const handleEditTeam = async(teamName) => {
-        const user = JSON.parse(localStorage.getItem('current_user'));
-        const json = {
-            name: teamName,
-        };
-        try {
-            const response = await fetch(`${API_URL}/teams/${teamId}`, {
-                method: 'PATCH',
-                headers: {
-                    'Content-Type': 'application/json',
-                    Authorization: `Bearer ${user.token}`,
-                },
-                body: JSON.stringify(json),
-            });
-
-            if (!response.ok) {
-                throw new Error('Error editing team');
-            }
-
-            navigate('/teams');
-
-        } catch (error) {
-            console.error('Error al editar el equipo:', error);
-        }
-    };
-
     useEffect(() => {
         const fetchData = async () => {
             setLoading(true);
@@ -105,9 +56,7 @@ function TeamPage() {
                 
                 const { data } = await supabase.storage
                     .from("team-pictures")
-                    .getPublicUrl(teamData.id + '.png');
-
-                console.log(data);
+                    .getPublicUrl(teamData.id);
 
                 setTeamData({
                     escudo: data.publicUrl,
@@ -121,27 +70,36 @@ function TeamPage() {
                 }
                 const playersData = await playersResponse.json();
 
-                const playersRes = await fetch(`${API_URL}/players/${playersData}`);
-                if (!playersRes.ok) {
-                    throw new Error('Error fetching player data');
-                }
+                const formattedPlayers = await Promise.all(
+                    playersData.map(async (player) => {
+                        // Fetch individual player data
+                        const playersRes = await fetch(`${API_URL}/players/${player}`);
+                        if (!playersRes.ok) {
+                            throw new Error('Error fetching player data');
+                        }
+        
+                        const playerData = await playersRes.json();
+        
+                        // Get public URL for the player's picture
+                        const { data: imageData } = await supabase.storage
+                            .from("player-pictures")
+                            .getPublicUrl(playerData.id);
 
-                const playerData = await playersRes.json();
-
-                const formattedPlayers = await Promise.all([playerData].map(async (player) => {
-                    const { data: imageData } = await supabase.storage
-                        .from("player-pictures")
-                        .getPublicUrl(player.id + '.png');
-
-                    return {
-                    edad: player.age,
-                    nombre: player.name,
-                    numero: player.number,
-                    posicion: player.position,
-                    id: player.id,
-                    foto: imageData.publicUrl,
-                }}));
-
+                        console.log("playerData", imageData);
+        
+                        // Return formatted player object
+                        return {
+                            edad: playerData.age,
+                            nombre: playerData.name,
+                            numero: playerData.number,
+                            posicion: playerData.position,
+                            id: playerData.id,
+                            foto: imageData.publicUrl,
+                        };
+                    })
+                );
+        
+                // Actualiza los estados con la lista completa
                 setPlayers(formattedPlayers);
                 setFilteredPlayers(formattedPlayers);
 
@@ -380,13 +338,14 @@ function AdminAddPlayerModal() {
     }
 
     const uploadPlayerImage = async (playerId) => {
+
         if (!file) {
             setError('Por favor selecciona un archivo para subir');
             return;
         }
 
         try {
-            const { data, error } = await supabase.storage
+            const { data } = await supabase.storage
                 .from('player-pictures')
                 .upload(`${playerId}`, file, {
                     metadata: {
@@ -394,9 +353,6 @@ function AdminAddPlayerModal() {
                     },
                 });
 
-            if (error) {
-                throw new Error(error.message);
-            }
         } catch (error) {
             setError('Error al cargar la imagen del jugador');
         }
@@ -413,8 +369,6 @@ function AdminAddPlayerModal() {
             team_id: teamId,
         };
 
-        console.log(json);
-
         try {
             const response = await fetch(`${API_URL}/players`, {
                 method: 'POST',
@@ -430,6 +384,8 @@ function AdminAddPlayerModal() {
             }
 
             const player = await response.json();
+
+            console.log("player", player);
 
             await uploadPlayerImage(player.id);
 
@@ -469,6 +425,7 @@ function AdminAddPlayerModal() {
                             onSubmit={handleAddPlayer} 
                             onCancel={closeModal} 
                             setImage={true}
+                            setFile={setFile}
                         />
                     </div>
                 </div>

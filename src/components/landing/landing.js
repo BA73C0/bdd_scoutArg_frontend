@@ -10,7 +10,6 @@ function Landing() {
   const user = JSON.parse(localStorage.getItem('current_user_data'));
   if (user) {
     logout();
-    console.log(user);
   }
   
   const handleSignIn = () => {

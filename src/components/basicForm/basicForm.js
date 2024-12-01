@@ -1,9 +1,9 @@
 import React, { useState } from 'react';
 import './basicForm.css';
 
-const BasicForm = ({ fields, onSubmit, onCancel, setImage  }) => {
+const BasicForm = ({ fields, onSubmit, onCancel, setFile }) => {
     const [errorMessage, setErrorMessage] = useState('');
-    const [file, setFile] = useState(null);
+    const [file, setFileLocal] = useState(null);
 
     const [formData, setFormData] = useState(
         fields.reduce((acc, field) => {
@@ -11,10 +11,10 @@ const BasicForm = ({ fields, onSubmit, onCancel, setImage  }) => {
             return acc;
         }, {})
     );
-  
+
     const handleChange = (e) => {
         const { name, value } = e.target;
-            setFormData(prevData => ({
+        setFormData(prevData => ({
             ...prevData,
             [name]: value
         }));
@@ -22,6 +22,7 @@ const BasicForm = ({ fields, onSubmit, onCancel, setImage  }) => {
 
     const handleFileChange = (e) => {
         const selectedFile = e.target.files[0];
+        setFileLocal(selectedFile); 
         setFile(selectedFile);
     };
 
@@ -36,7 +37,7 @@ const BasicForm = ({ fields, onSubmit, onCancel, setImage  }) => {
             }
         }
 
-        if (setImage && !file) {
+        if (setFile && !file) {
             setErrorMessage(`Por favor, selecciona una imagen.`);
             return;
         }

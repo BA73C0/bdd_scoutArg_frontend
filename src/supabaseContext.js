@@ -4,13 +4,21 @@ import { createClient } from "@supabase/supabase-js";
 const SUPABASE_URL = process.env.REACT_APP_SUPABASE_URL;
 const SUPABASE_KEY = process.env.REACT_APP_SUPABASE_KEY;
 
-const supabase = createClient(SUPABASE_URL, SUPABASE_KEY);
+let supabase = createClient(SUPABASE_URL, SUPABASE_KEY);
 
 const SupabaseContext = createContext();
 
 export const SupabaseProvider = ({ children }) => {
     const login = (userData) => {
-        supabase.auth.setAuth(userData.token);
+        console.log(supabase)
+        supabase = createClient(SUPABASE_URL, SUPABASE_KEY, {
+            global: {
+                headers: {
+                    Authorization: `Bearer ${userData.token}`,
+                },
+            },
+        });
+        console.log(supabase)
     };
 
     const logout = async () => {
