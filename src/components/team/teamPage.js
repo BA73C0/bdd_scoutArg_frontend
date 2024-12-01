@@ -8,7 +8,6 @@ import './teamPage.css';
 import { API_URL, ADMIN_ID } from '../../utils';
 import { useSupabase } from '../../supabaseContext'
 import AdminDeleteModal from '../adminDeleteModal/adminDeleteModal'
-import AdminTeamModal from '../adminTeamModal/adminTeamModal';
 
 function TeamPage() {
     const { teamId } = useParams();
@@ -276,9 +275,6 @@ function TeamPage() {
                         id = {teamId}
                         nombre = {teamData.nombre}
                         onDelete= {onDelete}
-                        />
-                        <AdminTeamModal
-                            onAdd={handleEditTeam}
                         />
                         <AdminAddPlayerToTeamModal />
                     </div>

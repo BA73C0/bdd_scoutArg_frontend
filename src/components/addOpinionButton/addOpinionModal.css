@@ -8,26 +8,14 @@
     display: flex;
     justify-content: center;
     align-items: center;
-    z-index: 1000;
-}
-
-.form-window {
-  width: 100%;
-  max-width: 800px;
-  margin: 0 auto;
-  padding: 20px;
-  color: #fff;
-  background-color: #004906;
-  font-size: 18px;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-  border-radius: 8px;
+    z-index: 2;
 }
 
 .modal {
     color: #004906;
     background-color: white;
     padding: 40px;
-    border-radius: 20pxx;
+    border-radius: 20px;
     width: 800px;
     max-width: 90%;
     border: 10px solid #004906;

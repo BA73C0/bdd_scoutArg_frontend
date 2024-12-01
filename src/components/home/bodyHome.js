@@ -6,7 +6,7 @@ import './bodyHome.css';
 import { API_URL, ADMIN_ID } from '../../utils';
 import LoadingSpinner from '../loadingSpinner/loadingSpinner'
 import { useSupabase } from '../../supabaseContext'
-import AdminTeamModal from '../adminTeamModal/adminTeamModal';
+import BasicForm from '../basicForm/basicForm';
 
 function BodyHome() {
     const [teams, setTeams] = useState([]);
@@ -55,30 +55,6 @@ function BodyHome() {
         setFilteredTeams(filtered);
     };
 
-    const handleAddTeam = async(teamName) => {
-        const user = JSON.parse(localStorage.getItem('current_user'));
-        const json = {
-            name: teamName,
-        };
-        try {
-            const response = await fetch(`${API_URL}/teams`, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    Authorization: `Bearer ${user.token}`,
-                },
-                body: JSON.stringify(json),
-            });
-
-            if (!response.ok) {
-                throw new Error('Error adding team');
-            }
-
-        } catch (error) {
-            console.error('Error al crear el equipo:', error);
-        }
-    };
-
     const handleRowClick = (team) => {
         navigate(`/teams/${team.team_id}/${team.nombre}`);
     }
@@ -107,31 +83,109 @@ function BodyHome() {
                 onRowClick={handleRowClick} 
                 onImageError={(e) => { e.target.src = '/logo512.png'; }}
             />
-            <AdminTeamModal
-                onAdd={handleAddTeam}
-             />
+            <AdminTeamModal />
         </section>
     );
 }
 
-function AdminAddTeamModal() {
+function AdminTeamModal() {
+    const [error, setError] = useState('');
     const user = JSON.parse(localStorage.getItem('current_user'));
-    // POST de un team
+    const [isModalOpen, setIsModalOpen] = useState(false);
+    const { supabase } = useSupabase();
+    const [file, setFile] = useState(null);
 
     if (user.id !== ADMIN_ID) {
         return null;
-    } else {
-        // reutilizar boton de agregar equipo/jugador
-
-        // hay que hacerle el/los css en index.css
-        return (
-            <>
-                <button>Añadir equipo</button>
-
-                /* Modal con el form para añadir equipo */
-            </>
-        );
     }
+
+    const uploadTeamImage = async (teamId) => {
+        if (!file) {
+            setError('Por favor selecciona un archivo para subir');
+            return;
+        }
+
+        try {
+            const { data, error } = await supabase.storage
+                .from('team-pictures')
+                .upload(`${teamId}`, file, {
+                    metadata: {
+                        owner_id: user.id,
+                    },
+                });
+
+            if (error) {
+                throw new Error(error.message);
+            }
+        } catch (error) {
+            setError('Error al cargar la imagen del equipo');
+        }
+    };
+
+    const handleAddTeam = async (formData) => {
+        const { teamName } = formData;
+
+        const json = {
+            name: teamName,
+        };
+
+        try {
+            const response = await fetch(`${API_URL}/teams`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    Authorization: `Bearer ${user.token}`,
+                },
+                body: JSON.stringify(json),
+            });
+
+            if (!response.ok) {
+                throw new Error('Error adding team');
+            }
+
+            const team = await response.json();
+
+            await uploadTeamImage(team.id);
+
+            setError('');
+            closeModal();
+        } catch (error) {
+            console.error('Error al crear el equipo:', error);
+            setError('Error al crear el equipo');
+        }
+    };
+
+    const fields = [
+        { name: 'teamName', label: 'Nombre del equipo', required: true },
+    ];
+
+    const openModal = () => setIsModalOpen(true);
+    const closeModal = () => {
+        setIsModalOpen(false);
+        setFile(null); // Reinicia el archivo seleccionado al cerrar el modal
+        setError('');
+    };
+
+    return (
+        <>
+            <button onClick={openModal}>Agregar Equipo</button>
+
+            {isModalOpen && (
+                <div className="form-window-overlay">
+                    <div className="form-window">
+                        <h1>Agregar nuevo equipo</h1>
+                        <BasicForm 
+                            fields={fields} 
+                            onSubmit={handleAddTeam} 
+                            onCancel={closeModal} 
+                            setImage={true}
+                        />
+                    </div>
+                </div>
+            )}
+        </>
+    );
 }
+
 
 export default BodyHome;
