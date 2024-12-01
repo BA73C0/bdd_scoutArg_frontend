@@ -7,7 +7,7 @@ import AddOpinionModal from '../addOpinionButton/addOpinionModal';
 import './teamPage.css';
 import { API_URL, ADMIN_ID } from '../../utils';
 import { useSupabase } from '../../supabaseContext'
-import AdminDeleteModal from '../adminDeleteModal/adminDeleteModal'
+import BasicForm from '../basicForm/basicForm';
 
 function TeamPage() {
     const { teamId } = useParams();
@@ -106,6 +106,8 @@ function TeamPage() {
                 const { data } = await supabase.storage
                     .from("team-pictures")
                     .getPublicUrl(teamData.id + '.png');
+
+                console.log(data);
 
                 setTeamData({
                     escudo: data.publicUrl,
@@ -271,12 +273,8 @@ function TeamPage() {
                     />
 
                     <div className="button-container">
-                        <AdminDeleteModal
-                        id = {teamId}
-                        nombre = {teamData.nombre}
-                        onDelete= {onDelete}
-                        />
-                        <AdminAddPlayerToTeamModal />
+                        <AdminDeleteTeamModal/>
+                        <AdminAddPlayerModal />
                     </div>
                 </>
             )}
@@ -304,25 +302,181 @@ function AdminEditTeamModal() {
     }
 }
 
-function AdminAddPlayerToTeamModal() {
+function AdminDeleteTeamModal() {
+    const { teamId } = useParams();
+    const [error, setError] = useState('');
+    const [isModalOpen, setIsModalOpen] = useState(false);
     const user = JSON.parse(localStorage.getItem('current_user'));
-    // PATCH de un team
+    const navigate = useNavigate();
 
     if (user.id !== ADMIN_ID) {
         return null;
-    } else {
-        // reutilizar boton de agregar equipo/jugador
-
-        // hay que hacerle el/los css en index.css
-        return (
-            <>
-                <button>Agregar jugador</button>
-
-            </>
-                /* Modal con form para agregar un jugador al equipo  */
-        );
     }
+
+    const handleDeleteTeam = async () => {
+
+        try {
+            const response = await fetch(`${API_URL}/teams/${teamId}`, {
+                method: 'DELETE',
+                headers: {
+                    'Content-Type': 'application/json',
+                    Authorization: `Bearer ${user.token}`,
+                },
+            });
+
+            if (!response.ok) {
+                throw new Error('Error adding player');
+            }
+
+            await response.json();
+
+            setError('');
+            navigate('/teams');
+            closeModal();
+        } catch (error) {
+            console.error('Error al agregar el jugador:', error);
+            setError('Error al agregar el jugador');
+        }
+    };
+
+    const openModal = () => setIsModalOpen(true);
+    const closeModal = () => {
+        setIsModalOpen(false);
+        setError('');
+    };
+
+    return (
+        <>
+            <button onClick={openModal}>Borrar equipo</button>
+
+            {isModalOpen && (
+                <div className="form-window-overlay">
+                    <div className="form-window">
+                        <h1>Borrar equipo</h1>
+                        <p>Estas seguro que quieres borrar este equipo?</p>
+                        <BasicForm 
+                            onSubmit={handleDeleteTeam} 
+                            onCancel={closeModal} 
+                            fields={[]}
+                            setImage={false}
+                        />
+                    </div>
+                </div>
+            )}
+        </>
+    );
 }
+
+function AdminAddPlayerModal() {
+    const { teamId } = useParams();
+    const [error, setError] = useState('');
+    const user = JSON.parse(localStorage.getItem('current_user'));
+    const [isModalOpen, setIsModalOpen] = useState(false);
+    const { supabase } = useSupabase();
+    const [file, setFile] = useState(null);
+
+    if (user.id !== ADMIN_ID) {
+        return null;
+    }
+
+    const uploadPlayerImage = async (playerId) => {
+        if (!file) {
+            setError('Por favor selecciona un archivo para subir');
+            return;
+        }
+
+        try {
+            const { data, error } = await supabase.storage
+                .from('player-pictures')
+                .upload(`${playerId}`, file, {
+                    metadata: {
+                        owner_id: user.id,
+                    },
+                });
+
+            if (error) {
+                throw new Error(error.message);
+            }
+        } catch (error) {
+            setError('Error al cargar la imagen del jugador');
+        }
+    };
+
+    const handleAddPlayer = async (formData) => {
+        const { playerName, age, position, number } = formData;
+
+        const json = {
+            name: playerName,
+            age: parseInt(age, 10),
+            position,
+            number: parseInt(number, 10),
+            team_id: teamId,
+        };
+
+        console.log(json);
+
+        try {
+            const response = await fetch(`${API_URL}/players`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    Authorization: `Bearer ${user.token}`,
+                },
+                body: JSON.stringify(json),
+            });
+
+            if (!response.ok) {
+                throw new Error('Error adding player');
+            }
+
+            const player = await response.json();
+
+            await uploadPlayerImage(player.id);
+
+            setError('');
+            closeModal();
+        } catch (error) {
+            console.error('Error al agregar el jugador:', error);
+            setError('Error al agregar el jugador');
+        }
+    };
+
+    const fields = [
+        { name: 'playerName', label: 'Nombre', required: true },
+        { name: 'age', label: 'Edad', required: true },
+        { name: 'position', label: 'Posicion', required: true },
+        { name: 'number', label: 'Numero', required: true },
+        { name: 'foto', label: 'Seleccionar foto', required: true },
+    ];
+
+    const openModal = () => setIsModalOpen(true);
+    const closeModal = () => {
+        setIsModalOpen(false);
+        setFile(null);
+        setError('');
+    };
+
+    return (
+        <>
+            <button onClick={openModal}>Agregar Jugador</button>
+
+            {isModalOpen && (
+                <div className="form-window-overlay">
+                    <div className="form-window">
+                        <h1>Agregar nuevo equipo</h1>
+                        <BasicForm 
+                            fields={fields} 
+                            onSubmit={handleAddPlayer} 
+                            onCancel={closeModal} 
+                            setImage={true}
+                        />
+                    </div>
+                </div>
+            )}
+        </>
+    );
+}
+
 
 
 export default TeamPage;

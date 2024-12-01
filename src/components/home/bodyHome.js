@@ -83,12 +83,12 @@ function BodyHome() {
                 onRowClick={handleRowClick} 
                 onImageError={(e) => { e.target.src = '/logo512.png'; }}
             />
-            <AdminTeamModal />
+            <AdminAddTeamModal />
         </section>
     );
 }
 
-function AdminTeamModal() {
+function AdminAddTeamModal() {
     const [error, setError] = useState('');
     const user = JSON.parse(localStorage.getItem('current_user'));
     const [isModalOpen, setIsModalOpen] = useState(false);
@@ -106,17 +106,19 @@ function AdminTeamModal() {
         }
 
         try {
-            const { data, error } = await supabase.storage
+            const { data } = await supabase.storage
                 .from('team-pictures')
                 .upload(`${teamId}`, file, {
                     metadata: {
                         owner_id: user.id,
                     },
+                    headers: {
+                        Authorization: `Bearer ${user.token}`,
+                    },
                 });
 
-            if (error) {
-                throw new Error(error.message);
-            }
+            console.log('Uploaded data:', data);
+
         } catch (error) {
             setError('Error al cargar la imagen del equipo');
         }
@@ -157,6 +159,7 @@ function AdminTeamModal() {
 
     const fields = [
         { name: 'teamName', label: 'Nombre del equipo', required: true },
+        { name: 'foto', label: 'Seleccionar escudo', required: true },
     ];
 
     const openModal = () => setIsModalOpen(true);
@@ -178,7 +181,6 @@ function AdminTeamModal() {
                             fields={fields} 
                             onSubmit={handleAddTeam} 
                             onCancel={closeModal} 
-                            setImage={true}
                         />
                     </div>
                 </div>

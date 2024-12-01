@@ -29,6 +29,7 @@ const BasicForm = ({ fields, onSubmit, onCancel, setImage  }) => {
         e.preventDefault();
 
         for (const field of fields) {
+            if (field.name === 'foto') continue;
             if (!formData[field.name]) {
                 setErrorMessage(`Por favor, ingresa todos los campos.`);
                 return;
@@ -48,34 +49,35 @@ const BasicForm = ({ fields, onSubmit, onCancel, setImage  }) => {
         <form onSubmit={handleSubmit} className="form-container">
             {fields.map(field => (
                 <div className="form-group" key={field.name}>
-                <h3 htmlFor={field.name}>{field.label}</h3>
-                <input
-                    type={field.type || 'text'}
-                    id={field.name}
-                    name={field.name}
-                    value={formData[field.name]}
-                    onChange={handleChange}
-                    required={field.required}
-                />
+                    {field.name === 'foto' ? (
+                        <div className="file-upload">
+                            <label htmlFor="file-upload" className="custom-file-upload">
+                                {field.label}
+                            </label>
+                            <input
+                                type="file"
+                                id="file-upload"
+                                name="foto"
+                                onChange={handleFileChange}
+                                accept="image/*"
+                            />
+                            <p> {file ? file.name : 'No se ha seleccionado un archivo'} </p>
+                        </div>
+                    ) : (
+                        <>
+                            <label htmlFor={field.name}>{field.label}</label>
+                            <input
+                                type={field.type || 'text'}
+                                id={field.name}
+                                name={field.name}
+                                value={formData[field.name]}
+                                onChange={handleChange}
+                                required={field.required}
+                            />
+                        </>
+                    )}
                 </div>
             ))}
-            {setImage && (
-                <div className="form-group">
-                    <div className="file-upload">
-                        <label htmlFor="file-upload" className="custom-file-upload">
-                            Seleccionar escudo del equipo
-                        </label>
-                        <input
-                            type="file"
-                            id="file-upload"
-                            name="escudo"
-                            onChange={handleFileChange}
-                            accept="image/*"
-                        />
-                        <p> {file ? file.name : 'No se ha seleccionado un archivo'} </p>
-                    </div>
-                </div>
-            )}
 
             {errorMessage && <p className="error">{errorMessage}</p>}
 
