@@ -7,6 +7,7 @@ import './playerPage.css';
 import { API_URL, ADMIN_ID } from '../../utils';
 import LoadingSpinner from '../loadingSpinner/loadingSpinner';
 import { useSupabase } from '../../supabaseContext'
+import AdminDeleteModal from '../adminDeleteModal/adminDeleteModal'
 
 function PlayerPage() {
     const { playerId } = useParams();
@@ -186,10 +187,10 @@ function PlayerPage() {
                 onClose={closeOpinionForm}
             />
             <div  className="button-container">
-                <AdminDeletePlayerModal
+                <AdminDeleteModal
                 id = {playerId}
                 nombre = {playerData.nombre}
-                
+                onDelete={onDelete}
                 />
                 <AdminEditPlayerModal />
             </div>

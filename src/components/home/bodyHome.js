@@ -6,6 +6,7 @@ import './bodyHome.css';
 import { API_URL, ADMIN_ID } from '../../utils';
 import LoadingSpinner from '../loadingSpinner/loadingSpinner'
 import { useSupabase } from '../../supabaseContext'
+import AdminTeamModal from '../adminTeamModal/adminTeamModal';
 
 function BodyHome() {
     const [teams, setTeams] = useState([]);
@@ -54,6 +55,30 @@ function BodyHome() {
         setFilteredTeams(filtered);
     };
 
+    const handleAddTeam = async(teamName) => {
+        const user = JSON.parse(localStorage.getItem('current_user'));
+        const json = {
+            name: teamName,
+        };
+        try {
+            const response = await fetch(`${API_URL}/teams`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    Authorization: `Bearer ${user.token}`,
+                },
+                body: JSON.stringify(json),
+            });
+
+            if (!response.ok) {
+                throw new Error('Error adding team');
+            }
+
+        } catch (error) {
+            console.error('Error al crear el equipo:', error);
+        }
+    };
+
     const handleRowClick = (team) => {
         navigate(`/teams/${team.team_id}/${team.nombre}`);
     }
@@ -82,7 +107,9 @@ function BodyHome() {
                 onRowClick={handleRowClick} 
                 onImageError={(e) => { e.target.src = '/logo512.png'; }}
             />
-            <AdminAddTeamModal />
+            <AdminTeamModal
+                onAdd={handleAddTeam}
+             />
         </section>
     );
 }

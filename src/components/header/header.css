@@ -40,8 +40,8 @@
 .auth-buttons {
   display: flex;
   margin: 20px;
-  justify-content: flex-end;  /* Alinea los botones a la derecha */
-  width: 20%;  /* Asegura que los botones se ubiquen al final del contenedor */
+  justify-content: flex; 
+  width: 20%;
 }
 
 .auth-button {

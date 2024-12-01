@@ -7,6 +7,8 @@ import AddOpinionModal from '../addOpinionButton/addOpinionModal';
 import './teamPage.css';
 import { API_URL, ADMIN_ID } from '../../utils';
 import { useSupabase } from '../../supabaseContext'
+import AdminDeleteModal from '../adminDeleteModal/adminDeleteModal'
+import AdminTeamModal from '../adminTeamModal/adminTeamModal';
 
 function TeamPage() {
     const { teamId } = useParams();
@@ -45,8 +47,8 @@ function TeamPage() {
     };
 
     const onDelete = async () => {
+        const user = JSON.parse(localStorage.getItem('current_user'));
         try {
-            const user = JSON.parse(localStorage.getItem('current_user'));
             const response = await fetch(`${API_URL}/teams/${teamId}`, {
                 method: 'DELETE',
                 headers: {
@@ -64,6 +66,32 @@ function TeamPage() {
             navigate('/teams'); 
         } catch (error) {
             console.error('Error al eliminar el equipo:', error);
+        }
+    };
+
+    const handleEditTeam = async(teamName) => {
+        const user = JSON.parse(localStorage.getItem('current_user'));
+        const json = {
+            name: teamName,
+        };
+        try {
+            const response = await fetch(`${API_URL}/teams/${teamId}`, {
+                method: 'PATCH',
+                headers: {
+                    'Content-Type': 'application/json',
+                    Authorization: `Bearer ${user.token}`,
+                },
+                body: JSON.stringify(json),
+            });
+
+            if (!response.ok) {
+                throw new Error('Error editing team');
+            }
+
+            navigate('/teams');
+
+        } catch (error) {
+            console.error('Error al editar el equipo:', error);
         }
     };
 
@@ -244,54 +272,19 @@ function TeamPage() {
                     />
 
                     <div className="button-container">
-                        <AdminDeleteTeamModal
+                        <AdminDeleteModal
                         id = {teamId}
                         nombre = {teamData.nombre}
                         onDelete= {onDelete}
                         />
-                        <AdminEditTeamModal />
+                        <AdminTeamModal
+                            onAdd={handleEditTeam}
+                        />
                         <AdminAddPlayerToTeamModal />
                     </div>
                 </>
             )}
         </section>
-    );
-}
-
-
-
-function AdminDeleteTeamModal({id, nombre, onDelete}) {
-    const user = JSON.parse(localStorage.getItem('current_user'));
-    const [isModalOpen, setIsModalOpen] = useState(false);
-
-    if (user.id !== ADMIN_ID) {
-        return null;
-    }
-    
-
-    const openModal = () => setIsModalOpen(true);
-    const closeModal = () => setIsModalOpen(false);
-    const confirmDelete = () => {
-        console.log(id);
-        closeModal(); 
-    };
-
-    return (
-        <>
-            <button onClick={openModal}>Borrar equipo</button>
-
-            {isModalOpen && (
-                <div className="modal-overlay">
-                    <div className="modal-content">
-                        <p>¿Está seguro que quiere borrar a {nombre}?</p>
-                        <div className="modal-actions">
-                            <button className="confirm-button" onClick={onDelete}>Sí</button>
-                            <button className="cancel-button" onClick={closeModal}>Cancelar</button>
-                        </div>
-                    </div>
-                </div>
-            )}
-        </>
     );
 }
 
