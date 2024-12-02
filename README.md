@@ -12,6 +12,8 @@
     - [ ] Borrar opiniones 
         - hay q usar el BasicForm (similar a los de arriba)
 - [ ] Cargar la BDD (tres equipos esta bien)
+- [ ] Que el texto de las opiniones en la tabla tenga una cantidad maxima
+    - Si querés ver todo el texo, clickeás la opinón
 - [ ] Corregir errores de sintaxis y de importaciones no usadas
 - [ ] Arregar riesgos de npm ¿?
 
