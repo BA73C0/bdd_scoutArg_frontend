@@ -338,7 +338,6 @@ function AdminAddPlayerModal() {
     }
 
     const uploadPlayerImage = async (playerId) => {
-
         if (!file) {
             setError('Por favor selecciona un archivo para subir');
             return;
@@ -351,10 +350,13 @@ function AdminAddPlayerModal() {
                     metadata: {
                         owner_id: user.id,
                     },
+                    headers: {
+                        Authorization: `Bearer ${user.token}`,
+                    },
                 });
 
         } catch (error) {
-            setError('Error al cargar la imagen del jugador');
+            setError('Error al cargar la imagen del equipo');
         }
     };
 
