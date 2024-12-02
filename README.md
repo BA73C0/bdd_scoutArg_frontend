@@ -3,8 +3,8 @@
 - Botones
     - [x] Agregar jugador
         - Falta hacer que al subir el form se recargue solo el fetch de los jugadores
-    - [x] Borrar jugador
-        - hay q usar el BasicForm (similar a los de arriba)
+    - [ ] Borrar jugador
+        - Funciona pero te lleva a teams
     - [ ] Editar equipo
         - hay q usar el BasicForm (similar a los de arriba) (tal vez para los de editar haya que crear otro componente)
     - [ ] Editar jugador
