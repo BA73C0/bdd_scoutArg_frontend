@@ -12,23 +12,22 @@
 }
 
 .menu-dropdown {
+    display: flex;             /* Añadido para habilitar flexbox */
+    align-items: center;       /* Centrado vertical */
+    justify-content: center;   /* Centrado horizontal */
     position: absolute;
-    top: 100px; 
+    top: 95px; 
     right: 0;
     background-color: #004906;
     border: 1px solid #ccc;
     border-radius: 8px;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-    z-index: 1000;
     width: 150px;
-    display: block;
 }
 
 .menu-item {
-    display: block;
     padding: 10px 15px;
     width: 100%;
-    text-align: left;
     color: white;
     font-weight: 500;
     background-color: transparent;

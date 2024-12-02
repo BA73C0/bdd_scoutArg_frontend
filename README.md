@@ -1,11 +1,11 @@
 ## Todo
 
 - Botones
-    - [ ] Agregar equipo
+    - [x] Agregar equipo
         - Falta hacer que al subir el form se recargue solo el fetch de equipos
     - [ ] Agregar jugador
         - Falta hacer que al subir el form se recargue solo el fetch de los jugadores
-    - [ ] Agregar borrar equipo
+    - [x] Agregar borrar equipo
         - Falta hacer que al subir el form te mande a /teams
     - [ ] Borrar jugador
         - hay q usar el BasicForm (similar a los de arriba)
@@ -15,7 +15,7 @@
         - hay q usar el BasicForm (similar a los de arriba) (tal vez para los de editar haya que crear otro componente)
     - [ ] Borrar opiniones 
         - hay q usar el BasicForm (similar a los de arriba)
-- [ ] Corregir el css el boton de logout (esta descentrado xd)
+- [x] Corregir el css el boton de logout (esta descentrado xd)
 - [ ] Cargar la BDD (tres equipos esta bien)
 - [ ] Corregir errores de sintaxis y de importaciones no usadas
 - [ ] Arregar riesgos de npm ¿?

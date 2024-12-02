@@ -45,73 +45,74 @@ function TeamPage() {
         }
     };
 
-    useEffect(() => {
-        const fetchData = async () => {
-            setLoading(true);
-            try {
-                // Fetch team data
-                const teamResponse = await fetch(`${API_URL}/teams/${teamId}`);
-                if (!teamResponse.ok) throw new Error('Error fetching team data');
-                const teamData = await teamResponse.json();
-                
-                const { data } = await supabase.storage
-                    .from("team-pictures")
-                    .getPublicUrl(teamData.id);
+    const fetchData = async () => {
+        setLoading(true);
+        try {
+            // Fetch team data
+            const teamResponse = await fetch(`${API_URL}/teams/${teamId}`);
+            if (!teamResponse.ok) throw new Error('Error fetching team data');
+            const teamData = await teamResponse.json();
+            
+            const { data } = await supabase.storage
+                .from("team-pictures")
+                .getPublicUrl(teamData.id);
 
-                setTeamData({
-                    escudo: data.publicUrl,
-                    nombre: teamData.name,
-                });
+            setTeamData({
+                escudo: data.publicUrl,
+                nombre: teamData.name,
+            });
 
-                // Fetch players
-                const playersResponse = await fetch(`${API_URL}/teams/${teamId}/players`);
-                if (!playersResponse.ok) {
-                    throw new Error('Error fetching players');
-                }
-                const playersData = await playersResponse.json();
-
-                const formattedPlayers = await Promise.all(
-                    playersData.map(async (player) => {
-                        // Fetch individual player data
-                        const playersRes = await fetch(`${API_URL}/players/${player}`);
-                        if (!playersRes.ok) {
-                            throw new Error('Error fetching player data');
-                        }
-        
-                        const playerData = await playersRes.json();
-        
-                        // Get public URL for the player's picture
-                        const { data: imageData } = await supabase.storage
-                            .from("player-pictures")
-                            .getPublicUrl(playerData.id);
-
-                        console.log("playerData", imageData);
-        
-                        // Return formatted player object
-                        return {
-                            edad: playerData.age,
-                            nombre: playerData.name,
-                            numero: playerData.number,
-                            posicion: playerData.position,
-                            id: playerData.id,
-                            foto: imageData.publicUrl,
-                        };
-                    })
-                );
-        
-                // Actualiza los estados con la lista completa
-                setPlayers(formattedPlayers);
-                setFilteredPlayers(formattedPlayers);
-
-                // Fetch opinions
-                fetchOpinions();
-            } catch (err) {
-                console.error(err);
-            } finally {
-                setLoading(false);
+            // Fetch players
+            const playersResponse = await fetch(`${API_URL}/teams/${teamId}/players`);
+            if (!playersResponse.ok) {
+                throw new Error('Error fetching players');
             }
-        };
+            const playersData = await playersResponse.json();
 
+            const formattedPlayers = await Promise.all(
+                playersData.map(async (player) => {
+                    // Fetch individual player data
+                    const playersRes = await fetch(`${API_URL}/players/${player}`);
+                    if (!playersRes.ok) {
+                        throw new Error('Error fetching player data');
+                    }
+    
+                    const playerData = await playersRes.json();
+    
+                    // Get public URL for the player's picture
+                    const { data: imageData } = await supabase.storage
+                        .from("player-pictures")
+                        .getPublicUrl(playerData.id);
+
+                    console.log("playerData", imageData);
+    
+                    // Return formatted player object
+                    return {
+                        edad: playerData.age,
+                        nombre: playerData.name,
+                        numero: playerData.number,
+                        posicion: playerData.position,
+                        id: playerData.id,
+                        foto: imageData.publicUrl,
+                    };
+                })
+            );
+    
+            // Actualiza los estados con la lista completa
+            setPlayers(formattedPlayers);
+            setFilteredPlayers(formattedPlayers);
+
+            // Fetch opinions
+            fetchOpinions();
+        } catch (err) {
+            console.error(err);
+        } finally {
+            setLoading(false);
+        }
+    };
+
+
+    useEffect(() => {
         fetchData();
     }, [teamId]);
 
@@ -232,7 +233,8 @@ function TeamPage() {
 
                     <div className="button-container">
                         <AdminDeleteTeamModal/>
-                        <AdminAddPlayerModal />
+                        <AdminAddPlayerModal
+                        fetchData={ fetchData } />
                     </div>
                 </>
             )}
@@ -283,18 +285,18 @@ function AdminDeleteTeamModal() {
             });
 
             if (!response.ok) {
-                throw new Error('Error adding player');
+                throw new Error('Error deleting Team');
             }
 
             await response.json();
 
             setError('');
-            navigate('/teams');
             closeModal();
         } catch (error) {
-            console.error('Error al agregar el jugador:', error);
-            setError('Error al agregar el jugador');
+            console.error('Error al borrar el equipo:', error);
+            setError('Error al  al borrar el equipo');
         }
+        navigate('/teams');
     };
 
     const openModal = () => setIsModalOpen(true);
@@ -325,7 +327,7 @@ function AdminDeleteTeamModal() {
     );
 }
 
-function AdminAddPlayerModal() {
+function AdminAddPlayerModal({ fetchData }) {
     const { teamId } = useParams();
     const [error, setError] = useState('');
     const user = JSON.parse(localStorage.getItem('current_user'));
@@ -381,18 +383,15 @@ function AdminAddPlayerModal() {
                 body: JSON.stringify(json),
             });
 
-            if (!response.ok) {
-                throw new Error('Error adding player');
+            if (response.ok) {
+                const player = await response.json();
+                await fetchData();
+                await uploadPlayerImage(player.id);
+                setError('');
+                closeModal();
+            } else {
+                throw new Error('Error adding Player');
             }
-
-            const player = await response.json();
-
-            console.log("player", player);
-
-            await uploadPlayerImage(player.id);
-
-            setError('');
-            closeModal();
         } catch (error) {
             console.error('Error al agregar el jugador:', error);
             setError('Error al agregar el jugador');

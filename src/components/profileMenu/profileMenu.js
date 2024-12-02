@@ -28,7 +28,7 @@ function ProfileMenu() {
                 </button>
                 {isMenuOpen && (
                     <div className="menu-dropdown">
-                        <button onClick={handleLogOut} className="menu-item">Logout</button>
+                        <button onClick={handleLogOut} className="menu-item">LogOut</button>
                     </div>
                 )}
 
