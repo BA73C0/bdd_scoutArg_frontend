@@ -7,7 +7,7 @@ import './playerPage.css';
 import { API_URL, ADMIN_ID } from '../../utils';
 import LoadingSpinner from '../loadingSpinner/loadingSpinner';
 import { useSupabase } from '../../supabaseContext'
-import AdminDeleteModal from '../adminDeleteModal/adminDeleteModal'
+import BasicForm from '../basicForm/basicForm';
 
 function PlayerPage() {
     const { playerId } = useParams();
@@ -45,27 +45,6 @@ function PlayerPage() {
         }
     };
 
-    const onDelete = async () => {
-        try {
-            const user = JSON.parse(localStorage.getItem('current_user'));
-            const response = await fetch(`${API_URL}/players/${playerId}`, {
-                method: 'DELETE',
-                body: JSON.stringify(playerId),
-                headers: {
-                    Authorization: `Bearer ${user.token}`,
-                },
-            });
-    
-            if (!response.ok) {
-                throw new Error('Error al eliminar el equipo');
-            }
-            
-            navigate('/teams'); 
-        } catch (error) {
-            console.error('Error al eliminar el equipo:', error);
-        }
-    };
-
     useEffect(() => {
         const fetchPlayerData = async () => {
             setLoading(true);
@@ -76,9 +55,11 @@ function PlayerPage() {
                 }
                 const playerData = await playerResponse.json();
 
+                console.log(playerData);
+
                 const { data } = await supabase.storage
                     .from("player-pictures")
-                    .getPublicUrl(playerData.id + '.png');
+                    .getPublicUrl(playerData.id);
 
                 setPlayerData({
                     foto: data.publicUrl,
@@ -87,6 +68,7 @@ function PlayerPage() {
                     numero: playerData.number,
                     id: playerData.id,
                     edad: playerData.age,
+                    team: playerData.team,
                 });
 
                 await fetchOpinions();
@@ -187,45 +169,71 @@ function PlayerPage() {
                 onClose={closeOpinionForm}
             />
             <div  className="button-container">
-                <AdminDeleteModal
-                id = {playerId}
-                nombre = {playerData.nombre}
-                onDelete={onDelete}
-                />
+                <AdminDeletePlayerModal playerData={playerData}/>
                 <AdminEditPlayerModal />
             </div>
         </section>
     );
 }
 
-function AdminDeletePlayerModal({id, nombre, onDelete}) {
-    const user = JSON.parse(localStorage.getItem('current_user'));
+function AdminDeletePlayerModal({ playerData }) {
+    const { playerId } = useParams();
+    const [error, setError] = useState('');
     const [isModalOpen, setIsModalOpen] = useState(false);
+    const user = JSON.parse(localStorage.getItem('current_user'));
+    const navigate = useNavigate();
 
     if (user.id !== ADMIN_ID) {
         return null;
     }
-    
+
+    const handleDeletePlayer = async () => {
+
+        try {
+            const response = await fetch(`${API_URL}/players/${playerId}`, {
+                method: 'DELETE',
+                headers: {
+                    'Content-Type': 'application/json',
+                    Authorization: `Bearer ${user.token}`,
+                },
+            });
+
+            if (!response.ok) {
+                throw new Error('Error deleting player');
+            }
+
+            await response.json();
+
+            setError('');
+            closeModal();
+        } catch (error) {
+            console.error('Error al borrar el jugador:', error);
+            setError('Error al  al borrar el jugador');
+        }
+        navigate(`/teams/${playerData.team.id}/${playerData.team.name}`);
+    };
 
     const openModal = () => setIsModalOpen(true);
-    const closeModal = () => setIsModalOpen(false);
-    const confirmDelete = () => {
-        console.log(id);
-        closeModal(); 
+    const closeModal = () => {
+        setIsModalOpen(false);
+        setError('');
     };
 
     return (
         <>
-            <button onClick={openModal}>Borrar Jugador</button>
+            <button onClick={openModal}>Borrar jugador</button>
 
             {isModalOpen && (
-                <div className="modal-overlay">
-                    <div className="modal-content">
-                        <p>¿Está seguro que quiere borrar a {nombre}?</p>
-                        <div className="modal-actions">
-                            <button className="confirm-button" onClick={onDelete}>Sí</button>
-                            <button className="cancel-button" onClick={closeModal}>Cancelar</button>
-                        </div>
+                <div className="form-window-overlay">
+                    <div className="form-window">
+                        <h1>Borrar jugador</h1>
+                        <p>¿Estas seguro que quieres borrar a "{playerData.nombre}"?</p>
+                        <BasicForm 
+                            onSubmit={handleDeletePlayer} 
+                            onCancel={closeModal} 
+                            fields={[]}
+                            setImage={false}
+                        />
                     </div>
                 </div>
             )}

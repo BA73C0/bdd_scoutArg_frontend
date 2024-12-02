@@ -31,7 +31,7 @@ function AddOpinionModal({ isOpen, onClose, onSubmit }) {
                         required
                     />
                     <div className="rating-container">
-                        <label>Puntuación:</label>
+                        <h3>Puntuación:</h3>
                         <div className="stars">
                             {[1, 2, 3, 4, 5].map((star) => (
                                 <span
@@ -44,8 +44,10 @@ function AddOpinionModal({ isOpen, onClose, onSubmit }) {
                             ))}
                         </div>
                     </div>
-                    <button type="submit">Enviar Opinión</button>
-                    <button type="button" onClick={onClose}>Cancelar</button>
+                    <div  className="button-container">
+                        <button type="submit">Enviar Opinión</button>
+                        <button type="button" onClick={onClose}>Cancelar</button>
+                    </div>
                 </form>
             </div>
         </div>

@@ -62,8 +62,6 @@ function TeamPage() {
                     .from("player-pictures")
                     .getPublicUrl(playerData.id);
 
-                console.log("playerData", imageData);
-
                 return {
                     edad: playerData.age,
                     nombre: playerData.name,
@@ -109,7 +107,6 @@ function TeamPage() {
             setLoading(false);
         }
     };
-
 
     useEffect(() => {
         fetchData();
@@ -231,9 +228,9 @@ function TeamPage() {
                     />
 
                     <div className="button-container">
-                        <AdminDeleteTeamModal/>
-                        <AdminAddPlayerModal
-                        fetchPlayers={ fetchPlayers } />
+                        <AdminDeleteTeamModal teamData={teamData} />
+                        <AdminAddPlayerModal fetchPlayers={ fetchPlayers } />
+                        <AdminEditTeamModal teamData={teamData} />
                     </div>
                 </>
             )}
@@ -241,27 +238,118 @@ function TeamPage() {
     );
 }
 
-function AdminEditTeamModal() {
+function AdminEditTeamModal({ teamData }) {
+    const [error, setError] = useState('');
+    const { teamId } = useParams();
     const user = JSON.parse(localStorage.getItem('current_user'));
-    // PATCH de un team
+    const [isModalOpen, setIsModalOpen] = useState(false);
+    const { supabase } = useSupabase();
+    const [file, setFile] = useState(null);
+    const navigate = useNavigate();
 
     if (user.id !== ADMIN_ID) {
         return null;
-    } else {
-        // reutilizar boton de agregar equipo/jugador
-
-        // hay que hacerle el/los css en index.css
-        return (
-            <>
-                <button>Editar equipo</button>
-
-            </>
-                /* Modal con form para editar equipo  */
-        );
     }
+
+    const uploadTeamImage = async (teamId) => {
+        if (!file) {
+            setError('Por favor selecciona un archivo para subir');
+            return;
+        }
+
+        console.log("user", user);
+
+        try {
+            const { data } = await supabase.storage
+                .from('team-pictures')
+                .upload(`${teamId}`, file, {
+                    metadata: {
+                        owner_id: user.id,
+                    },
+                    headers: {
+                        Authorization: `Bearer ${user.token}`,
+                    },
+                });
+
+            console.log('Uploaded data:', data);
+
+        } catch (error) {
+            setError('Error al cargar la imagen del equipo');
+        }
+    };
+
+    const handleEditTeam = async (formData) => {
+        const { teamName } = formData;
+
+        const json = {
+            name: teamName,
+        };
+
+        try {
+            const response = await fetch(`${API_URL}/teams/${teamId}`, {
+                method: 'PATCH',
+                headers: {
+                    'Content-Type': 'application/json',
+                    Authorization: `Bearer ${user.token}`,
+                },
+                body: JSON.stringify(json),
+            });
+
+            if (response.ok) {
+                await response.json();
+                if (file) {
+                    await uploadTeamImage(teamId);
+                }
+            } else {
+                console.error('Error al editar el equipo:');
+                throw new Error('Error adding Team');
+            }
+        } catch (error) {
+            console.error('Error al editar el equipo:', error);
+            setError('Error al editar el equipo');
+        } finally {
+            setError('');
+            closeModal();
+            navigate(`/teams/${teamId}/${teamName}`);
+            window.location.reload();
+        }
+    };
+
+    const fields = [
+        { name: 'teamName', label: 'Nombre del equipo', value: `${teamData.nombre}`, required: false },
+        { name: 'foto', label: 'Seleccionar escudo', required: false },
+    ];
+
+    const openModal = () => setIsModalOpen(true);
+    const closeModal = () => {
+        setIsModalOpen(false);
+        setFile(null);
+        setError('');
+    };
+
+    return (
+        <>
+            <button onClick={openModal}>Editar equipo</button>
+
+            {isModalOpen && (
+                <div className="form-window-overlay">
+                    <div className="form-window">
+                        <h1>Editar equipo</h1>
+                        <BasicForm 
+                            fields={fields} 
+                            onSubmit={handleEditTeam} 
+                            onCancel={closeModal} 
+                            setFile={setFile}
+                        />
+                        {error && <p className="error">{error}</p>}
+                    </div>
+                </div>
+            )}
+        </>
+    );
 }
 
-function AdminDeleteTeamModal() {
+function AdminDeleteTeamModal({ teamData }) {
     const { teamId } = useParams();
     const [error, setError] = useState('');
     const [isModalOpen, setIsModalOpen] = useState(false);
@@ -312,7 +400,7 @@ function AdminDeleteTeamModal() {
                 <div className="form-window-overlay">
                     <div className="form-window">
                         <h1>Borrar equipo</h1>
-                        <p>Estas seguro que quieres borrar este equipo?</p>
+                        <p>¿Estas seguro que quieres borrar a "{teamData.nombre}"?</p>
                         <BasicForm 
                             onSubmit={handleDeleteTeam} 
                             onCancel={closeModal} 
@@ -433,7 +521,5 @@ function AdminAddPlayerModal({ fetchPlayers }) {
         </>
     );
 }
-
-
 
 export default TeamPage;

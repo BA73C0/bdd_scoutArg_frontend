@@ -12,7 +12,6 @@ function ProfileMenu() {
 
     const toggleMenu = () => {
         setIsMenuOpen(!isMenuOpen);
-        console.log('Menu state:', !isMenuOpen)
     };
 
     const handleLogOut = async () => {

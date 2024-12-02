@@ -7,7 +7,7 @@ const BasicForm = ({ fields, onSubmit, onCancel, setFile }) => {
 
     const [formData, setFormData] = useState(
         fields.reduce((acc, field) => {
-            acc[field.name] = '';
+            acc[field.name] = field.value || '';
             return acc;
         }, {})
     );
@@ -28,18 +28,31 @@ const BasicForm = ({ fields, onSubmit, onCancel, setFile }) => {
 
     const handleSubmit = (e) => {
         e.preventDefault();
+        const hasFileField = fields.some(field => field.name === 'foto');
 
         for (const field of fields) {
-            if (field.name === 'foto') continue;
-            if (!formData[field.name]) {
-                setErrorMessage(`Por favor, ingresa todos los campos.`);
+            if (field.name === 'foto') {
+                continue;
+            };
+            if (field.required && !formData[field.name]) {
+                setErrorMessage(`Por favor, completa el campo: ${field.label}`);
                 return;
             }
         }
 
-        if (setFile && !file) {
-            setErrorMessage(`Por favor, selecciona una imagen.`);
-            return;
+        const allFieldsOptional = fields.every(field => !field.required);
+
+        if (allFieldsOptional) {
+            const isAnyFieldModified = fields.some(field =>
+                field.name === 'foto'
+                    ? hasFileField && file 
+                    : formData[field.name] !== field.value 
+            );
+
+            if (!isAnyFieldModified) {
+                setErrorMessage('Debes modificar al menos un campo para enviar el formulario.');
+                return;
+            }
         }
 
         setErrorMessage('');

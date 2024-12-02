@@ -10,7 +10,6 @@ const SupabaseContext = createContext();
 
 export const SupabaseProvider = ({ children }) => {
     const login = (userData) => {
-        console.log(supabase)
         supabase = createClient(SUPABASE_URL, SUPABASE_KEY, {
             global: {
                 headers: {
@@ -18,7 +17,6 @@ export const SupabaseProvider = ({ children }) => {
                 },
             },
         });
-        console.log(supabase)
     };
 
     const logout = async () => {

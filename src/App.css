@@ -34,6 +34,10 @@
   border: 10px solid #004906;
 }
 
+.form-window h1 {
+  color: black;
+}
+
 .app-container {
   display: flex;
   flex-direction: column;
