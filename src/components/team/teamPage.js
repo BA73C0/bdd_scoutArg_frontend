@@ -45,6 +45,43 @@ function TeamPage() {
         }
     };
 
+    const fetchPlayers = async () => {
+        setLoading(true);
+        try {
+            const playersResponse = await fetch(`${API_URL}/teams/${teamId}/players`);
+            if (!playersResponse.ok) throw new Error('Error fetching players');
+            const playersData = await playersResponse.json();
+            const formattedPlayers = await Promise.all(playersData.map(async (player) => {
+                const playersRes = await fetch(`${API_URL}/players/${player}`);
+                if (!playersRes.ok) {
+                    throw new Error('Error fetching player data');
+                }
+
+                const playerData = await playersRes.json();
+                const { data: imageData } = await supabase.storage
+                    .from("player-pictures")
+                    .getPublicUrl(playerData.id);
+
+                console.log("playerData", imageData);
+
+                return {
+                    edad: playerData.age,
+                    nombre: playerData.name,
+                    numero: playerData.number,
+                    posicion: playerData.position,
+                    id: playerData.id,
+                    foto: imageData.publicUrl,
+                };
+        }));
+            setPlayers(formattedPlayers);
+            setFilteredPlayers(formattedPlayers);
+        } catch (err) {
+            setError(err.message);
+        } finally {
+            setLoading(false);
+        }
+    };
+
     const fetchData = async () => {
         setLoading(true);
         try {
@@ -63,45 +100,7 @@ function TeamPage() {
             });
 
             // Fetch players
-            const playersResponse = await fetch(`${API_URL}/teams/${teamId}/players`);
-            if (!playersResponse.ok) {
-                throw new Error('Error fetching players');
-            }
-            const playersData = await playersResponse.json();
-
-            const formattedPlayers = await Promise.all(
-                playersData.map(async (player) => {
-                    // Fetch individual player data
-                    const playersRes = await fetch(`${API_URL}/players/${player}`);
-                    if (!playersRes.ok) {
-                        throw new Error('Error fetching player data');
-                    }
-    
-                    const playerData = await playersRes.json();
-    
-                    // Get public URL for the player's picture
-                    const { data: imageData } = await supabase.storage
-                        .from("player-pictures")
-                        .getPublicUrl(playerData.id);
-
-                    console.log("playerData", imageData);
-    
-                    // Return formatted player object
-                    return {
-                        edad: playerData.age,
-                        nombre: playerData.name,
-                        numero: playerData.number,
-                        posicion: playerData.position,
-                        id: playerData.id,
-                        foto: imageData.publicUrl,
-                    };
-                })
-            );
-    
-            // Actualiza los estados con la lista completa
-            setPlayers(formattedPlayers);
-            setFilteredPlayers(formattedPlayers);
-
+            fetchPlayers();
             // Fetch opinions
             fetchOpinions();
         } catch (err) {
@@ -234,7 +233,7 @@ function TeamPage() {
                     <div className="button-container">
                         <AdminDeleteTeamModal/>
                         <AdminAddPlayerModal
-                        fetchData={ fetchData } />
+                        fetchPlayers={ fetchPlayers } />
                     </div>
                 </>
             )}
@@ -327,7 +326,7 @@ function AdminDeleteTeamModal() {
     );
 }
 
-function AdminAddPlayerModal({ fetchData }) {
+function AdminAddPlayerModal({ fetchPlayers }) {
     const { teamId } = useParams();
     const [error, setError] = useState('');
     const user = JSON.parse(localStorage.getItem('current_user'));
@@ -385,7 +384,7 @@ function AdminAddPlayerModal({ fetchData }) {
 
             if (response.ok) {
                 const player = await response.json();
-                await fetchData();
+                await fetchPlayers();
                 await uploadPlayerImage(player.id);
                 setError('');
                 closeModal();
