@@ -1,14 +1,10 @@
 ## Todo
 
 - Botones
-    - [x] Editar jugador
-        - hay q usar el BasicForm (similar al EditTeam en TeamPage)
     - [ ] Borrar opiniones (en SeeOpinions)
         - hay q usar el BasicForm (similar al DeleteTeam en TeamPage)
 - [ ] Cargar la BDD (tres equipos esta bien)
 - [ ] Comentarios de las opiniones
-- [x] Que el texto de las opiniones en la tabla tenga una cantidad maxima
-    - Si querés ver todo el texo, clickeás la opinón
 - [ ] Corregir errores de sintaxis y de importaciones no usadas
 - [ ] Arregar riesgos de npm ¿?
 
