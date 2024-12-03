@@ -42,6 +42,7 @@ function BodyHome() {
         } catch (error) {
             console.error('Error fetching teams:', error);
         } finally {
+            setSearch('');
             setLoading(false);
         }
     };
@@ -79,12 +80,15 @@ function BodyHome() {
                 value={search} 
                 onSearch={handleSearch} 
             />
-            <Table 
-                data={filteredTeams} 
-                columns={columns} 
-                onRowClick={handleRowClick} 
-                onImageError={(e) => { e.target.src = '/logo512.png'; }}
-            />
+            <div style={{width: "60%"}}>
+                <Table 
+                    data={filteredTeams} 
+                    columns={columns} 
+                    onRowClick={handleRowClick} 
+                    onImageError={(e) => { e.target.src = '/logo512.png'; }}
+                    redirect={true}
+                />
+            </div>
             <AdminAddTeamModal fetchTeams={fetchTeams} />
         </section>
     );

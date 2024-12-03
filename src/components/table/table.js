@@ -11,7 +11,14 @@ function StarRating({ rating }) {
     return <div>{stars}</div>;
 }
 
-function Table({ data, columns, onRowClick, onImageError }) {
+function mapStrings(str) {
+    switch (str) {
+        case 'Comentarios': return 'comentario';
+        default: return str.toLowerCase();
+    }
+}
+
+function Table({ data, columns, onRowClick, onImageError, redirect }) {
     return (
         <div className="table-container">
             <table className="table">
@@ -25,9 +32,9 @@ function Table({ data, columns, onRowClick, onImageError }) {
                 <tbody className="table-body">
                     {data.map((row, index) => (
                         <tr 
-                            className="table-card" 
+                            className={`table-card ${redirect ? 'pointer-cursor' : ''}`}
                             key={index} 
-                            onClick={() => onRowClick(row)}
+                            onClick={redirect ? () => onRowClick(row) : null}
                         >
                             {columns.map((col, i) => (
                                 <td key={i}>
@@ -52,7 +59,7 @@ function Table({ data, columns, onRowClick, onImageError }) {
                                         <StarRating rating={row.puntuacion} />
                                     ) : (
                                         <div className="table-card-subcontainer">
-                                            {row[col.name.toLowerCase()]}
+                                            {row[mapStrings(col.name)]}
                                         </div>
                                     )}
                                 </td>

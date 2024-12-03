@@ -8,6 +8,7 @@ import './teamPage.css';
 import { API_URL, ADMIN_ID } from '../../utils';
 import { useSupabase } from '../../supabaseContext'
 import BasicForm from '../basicForm/basicForm';
+import SeeOpinionModal from '../addOpinionButton/seeOpinionModal';
 
 function TeamPage() {
     const { teamId } = useParams();
@@ -22,6 +23,7 @@ function TeamPage() {
     const [opinions, setOpinions] = useState([]);
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [error, setError] = useState(null);
+    const [selectedOpinion, setSelectedOpinion] = useState(null);
 
     const fetchOpinions = async () => {
         setLoading(true);
@@ -98,9 +100,9 @@ function TeamPage() {
             });
 
             // Fetch players
-            fetchPlayers();
+            await fetchPlayers();
             // Fetch opinions
-            fetchOpinions();
+            await fetchOpinions();
         } catch (err) {
             console.error(err);
         } finally {
@@ -156,6 +158,14 @@ function TeamPage() {
         }
     };
 
+    const handleOpinionClick = (opinion) => {
+        setSelectedOpinion(opinion);
+    }
+
+    const closeOpinionForm = () => {
+        setSelectedOpinion(null);
+    };
+
     const playerColumns = [
         { name: 'Foto', isImage: true },
         { name: 'Nombre', isImage: false },
@@ -195,10 +205,14 @@ function TeamPage() {
             </div>
             {selectedOption === 'Opiniones' && (
                 <>
-                    <Table
-                        data={opinions}
-                        columns={opinionColumns}
-                    />
+                    <div style={{width: "60%"}}>
+                        <Table 
+                            data={opinions} 
+                            columns={opinionColumns} 
+                            onRowClick={handleOpinionClick} 
+                            redirect={true}
+                        />
+                    </div>
                     <button 
                         className="add-opinion-btn"
                         onClick={() => setIsModalOpen(true)}
@@ -211,6 +225,13 @@ function TeamPage() {
                         onClose={() => setIsModalOpen(false)}
                         onSubmit={handleOpinonSubmit}
                     />
+
+                    <SeeOpinionModal
+                        opinion={selectedOpinion}
+                        onChange={setSelectedOpinion}
+                        onClose={closeOpinionForm}
+                        table={{name: 'teams'}}
+                    />
                 </>
             )}
             {selectedOption === 'Jugadores' && (
@@ -220,13 +241,15 @@ function TeamPage() {
                         value={search} 
                         onSearch={handleSearch} 
                     />
-                    <Table 
-                        data={filteredPlayers} 
-                        columns={playerColumns} 
-                        onRowClick={handlePlayerClick} 
-                        onImageError={(e) => { e.target.src = '/jugador.png'; }}
-                    />
-
+                    <div style={{width: "60%"}}>
+                        <Table 
+                            data={filteredPlayers} 
+                            columns={playerColumns} 
+                            onRowClick={handlePlayerClick} 
+                            onImageError={(e) => { e.target.src = '/jugador.png'; }}
+                            redirect={true}
+                        />
+                    </div>
                     <div className="button-container">
                         <AdminDeleteTeamModal teamData={teamData} />
                         <AdminAddPlayerModal fetchPlayers={ fetchPlayers } />
@@ -503,7 +526,7 @@ function AdminAddPlayerModal({ fetchPlayers }) {
             {isModalOpen && (
                 <div className="form-window-overlay">
                     <div className="form-window">
-                        <h1>Agregar nuevo equipo</h1>
+                        <h1>Agregar nuevo jugador</h1>
                         <BasicForm 
                             fields={fields} 
                             onSubmit={handleAddPlayer} 

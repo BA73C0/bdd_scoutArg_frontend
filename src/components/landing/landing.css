@@ -23,6 +23,11 @@
   margin: 0 20px;
 }
 
+.logo-container img {
+  width: 500px; /* Ajusta este valor según el tamaño deseado */
+  height: auto; /* Mantiene la proporción del logo */
+}
+
 .landing-home-button {
   background-color: #55a02a;
   color: white;

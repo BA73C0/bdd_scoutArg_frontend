@@ -11,6 +11,13 @@
     z-index: 2;
 }
 
+.form-window-container {
+    position: absolute;
+    top: 0;
+    left: calc(100% + 20px); /* Ajusta el espacio entre los modales */
+    z-index: 2; /* Mismo z-index que el modal principal */
+}
+
 .modal {
     color: #004906;
     background-color: white;

@@ -46,7 +46,7 @@
     margin-top: 20px;
     padding: 10px 20px;
     width: 10%;
-    background-color: #225500;
+    background-color: #4CAF50;
     color: white;
     border: none;
     border-radius: 5px;
@@ -54,5 +54,5 @@
 }
 
 .add-opinion-btn:hover {
-    background-color: #338000;
+    background-color: #0cac19;
 }

@@ -1,16 +1,25 @@
 import React from 'react';
 import './header.css'; 
-import Logo from '../logoButton/logoButton';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faUser } from '@fortawesome/free-solid-svg-icons';
 import ProfileMenu from '../profileMenu/profileMenu';
+import { Link } from 'react-router-dom';
 
 const Header = () => {
     const user = JSON.parse(localStorage.getItem('current_user_data'));
 
     return (
         <header className="header">
-            <Logo />
+            <div className="logo-container">
+                <Link to="/teams">
+                    <img 
+                        src="../ScoutArg.png"
+                        alt="Logo" 
+                        className="logo" 
+                        style={{width: "50px", height: "50px"}}
+                    /> 
+                </Link>
+            </div>
             <div className="user-info">
                 <FontAwesomeIcon icon={faUser}/>
                 {user.name}

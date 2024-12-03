@@ -22,14 +22,11 @@ function Landing() {
 
   return (
     <div className="landing">
-      <div className="title-container">
-        <h1> ScoutArg </h1>
-      </div>
       <div className="landing-home">
         <button onClick={handleSignIn} className="landing-home-button">Iniciar sesión</button>
         <div className="logo-container">
           <img
-            src="../logo512.png"
+            src="../ScoutArg.png"
             alt="Logo"
           />
         </div>

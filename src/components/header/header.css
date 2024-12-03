@@ -31,7 +31,6 @@
 }
 
 .logo-container {
-  display: flex;
   align-items: center;
   justify-content: left;
   padding: 10px;
