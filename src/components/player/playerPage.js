@@ -13,7 +13,7 @@ function PlayerPage() {
     const { playerId } = useParams();
     const { supabase } = useSupabase();
     const navigate = useNavigate();
-    const [playerData, setPlayerData] = useState({ foto: '', nombre: '', posicion: '', numero: '' });
+    const [playerData, setPlayerData] = useState({ foto: '', nombre: '', posicion: '', numero: '' , edad: ''});
     const [opinions, setOpinions] = useState([]);
     const [selectedOpinion, setSelectedOpinion] = useState(null);
     const [isModalOpen, setIsModalOpen] = useState(false);
@@ -243,7 +243,7 @@ function AdminDeletePlayerModal({ playerData }) {
 
 function AdminEditPlayerModal({ playerData }) {
     const [error, setError] = useState('');
-    const { playerId } = useParams();
+    const { playerId} = useParams();
     const user = JSON.parse(localStorage.getItem('current_user'));
     const [isModalOpen, setIsModalOpen] = useState(false);
     const { supabase } = useSupabase();
@@ -254,7 +254,7 @@ function AdminEditPlayerModal({ playerData }) {
         return null;
     }
 
-    const uploadPlayerImage = async (teamId) => {
+    const uploadPlayerImage = async (playerId) => {
         if (!file) {
             setError('Por favor selecciona un archivo para subir');
             return;
@@ -277,15 +277,15 @@ function AdminEditPlayerModal({ playerData }) {
         }
     };
 
-    const handleEditTeam = async (formData) => {
+    const handleEditPlayer = async (formData) => {
         const { playerName, age, position, number } = formData;
 
         const json = {
             name: playerName,
             age: parseInt(age, 10),
-            position,
+            position: position,
             number: parseInt(number, 10),
-            team_id: teamId,
+            team_id: playerData.team.id,
         };
 
         try {
@@ -301,7 +301,7 @@ function AdminEditPlayerModal({ playerData }) {
             if (response.ok) {
                 await response.json();
                 if (file) {
-                    await uploadPlayerImage(teamId);
+                    await uploadPlayerImage(playerId);
                 }
             } else {
                 console.error('Error al editar el equipo:');
@@ -313,17 +313,17 @@ function AdminEditPlayerModal({ playerData }) {
         } finally {
             setError('');
             closeModal();
-            navigate(`/teams/${teamId}/${teamName}`);
+            navigate(`/teams/${playerData.team.id}/${playerData.team.name}`);
             window.location.reload();
         }
     };
 
     const fields = [
-        { name: 'playerName', label: 'Nombre', required: true },
-        { name: 'age', label: 'Edad', required: true },
-        { name: 'position', label: 'Posicion', required: true },
-        { name: 'number', label: 'Numero', required: true },
-        { name: 'foto', label: 'Seleccionar foto', required: true },
+        { name: 'playerName', label: 'Nombre',value: `${playerData.nombre}`, required: false },
+        { name: 'age', label: 'Edad',value: `${playerData.edad}`, required: false },
+        { name: 'position', label: 'Posicion',value: `${playerData.posicion}`, required: false },
+        { name: 'number', label: 'Numero',value: `${playerData.numero}`, required: false },
+        { name: 'foto', label: 'Seleccionar foto', required: false },
     ];
 
     const openModal = () => setIsModalOpen(true);
@@ -335,7 +335,7 @@ function AdminEditPlayerModal({ playerData }) {
 
     return (
         <>
-            <button onClick={openModal}>Editar equipo</button>
+            <button onClick={openModal}>Editar Jugador</button>
 
             {isModalOpen && (
                 <div className="form-window-overlay">
@@ -343,7 +343,7 @@ function AdminEditPlayerModal({ playerData }) {
                         <h1>Editar equipo</h1>
                         <BasicForm 
                             fields={fields} 
-                            onSubmit={handleEditTeam} 
+                            onSubmit={handleEditPlayer} 
                             onCancel={closeModal} 
                             setFile={setFile}
                         />
