@@ -172,7 +172,7 @@ function TeamPage() {
         <section className="team-page">
             <header className="team-header">
                 <img 
-                    src={teamData.escudo} 
+                    src={teamData.escudo + '?nocache=1'} 
                     alt={`${teamData.nombre} escudo`}
                     className="team-logo"
                     onError={(e) => { e.target.src = '/logo512.png'; }}
@@ -256,18 +256,34 @@ function AdminEditTeamModal({ teamData }) {
             setError('Por favor selecciona un archivo para subir');
             return;
         }
-
         try {
-            const { data } = await supabase.storage
-                .from('team-pictures')
-                .upload(`${teamId}`, file, {
-                    metadata: {
-                        owner_id: user.id,
-                    },
-                    headers: {
-                        Authorization: `Bearer ${user.token}`,
-                    },
-                });
+            if (teamData.escudo !== null) {
+                console.log('Entre a editar la foto.');
+                // EDIT
+                const { data, error } = await supabase.storage 
+                  .from("team-pictures")
+                  .update(`${teamId}`, file, {
+                        metadata: {
+                            owner_id: user.id,
+                        },
+                        headers: {
+                            Authorization: `Bearer ${user.token}`,
+                        },
+                    });
+                console.log(error);
+            } else {
+                // POST
+                const { data, error } = await supabase.storage
+                    .from('team-pictures')
+                    .upload(`${teamId}`, file, {
+                        metadata: {
+                            owner_id: user.id,
+                        },
+                        headers: {
+                            Authorization: `Bearer ${user.token}`,
+                        },
+                    });
+            }
 
         } catch (error) {
             setError('Error al cargar la imagen del equipo');
@@ -307,7 +323,7 @@ function AdminEditTeamModal({ teamData }) {
             setError('');
             closeModal();
             navigate(`/teams/${teamId}/${teamName}`);
-            window.location.reload();
+            // window.location.reload();
         }
     };
 
