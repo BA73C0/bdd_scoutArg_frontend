@@ -170,7 +170,7 @@ function PlayerPage() {
             />
             <div  className="button-container">
                 <AdminDeletePlayerModal playerData={playerData}/>
-                <AdminEditPlayerModal />
+                <AdminEditPlayerModal playerData={playerData}/>
             </div>
         </section>
     );
@@ -241,24 +241,118 @@ function AdminDeletePlayerModal({ playerData }) {
     );
 }
 
-function AdminEditPlayerModal() {
+function AdminEditPlayerModal({ playerData }) {
+    const [error, setError] = useState('');
+    const { playerId } = useParams();
     const user = JSON.parse(localStorage.getItem('current_user'));
-    // PATCH de un player
+    const [isModalOpen, setIsModalOpen] = useState(false);
+    const { supabase } = useSupabase();
+    const [file, setFile] = useState(null);
+    const navigate = useNavigate();
 
     if (user.id !== ADMIN_ID) {
         return null;
-    } else {
-        // reutilizar boton de agregar equipo/jugador
-
-        // hay que hacerle el/los css en index.css
-        return (
-            <>
-                <button>Editar jugador</button>
-
-            </>
-                /* Modal con form para editar jugador  */
-        );
     }
+
+    const uploadPlayerImage = async (teamId) => {
+        if (!file) {
+            setError('Por favor selecciona un archivo para subir');
+            return;
+        }
+
+        try {
+            const { data } = await supabase.storage
+                .from('player-pictures')
+                .upload(`${playerId}`, file, {
+                    metadata: {
+                        owner_id: user.id,
+                    },
+                    headers: {
+                        Authorization: `Bearer ${user.token}`,
+                    },
+                });
+
+        } catch (error) {
+            setError('Error al cargar la imagen del jugador');
+        }
+    };
+
+    const handleEditTeam = async (formData) => {
+        const { playerName, age, position, number } = formData;
+
+        const json = {
+            name: playerName,
+            age: parseInt(age, 10),
+            position,
+            number: parseInt(number, 10),
+            team_id: teamId,
+        };
+
+        try {
+            const response = await fetch(`${API_URL}/players/${playerId}`, {
+                method: 'PATCH',
+                headers: {
+                    'Content-Type': 'application/json',
+                    Authorization: `Bearer ${user.token}`,
+                },
+                body: JSON.stringify(json),
+            });
+
+            if (response.ok) {
+                await response.json();
+                if (file) {
+                    await uploadPlayerImage(teamId);
+                }
+            } else {
+                console.error('Error al editar el equipo:');
+                throw new Error('Error adding Team');
+            }
+        } catch (error) {
+            console.error('Error al editar el equipo:', error);
+            setError('Error al editar el equipo');
+        } finally {
+            setError('');
+            closeModal();
+            navigate(`/teams/${teamId}/${teamName}`);
+            window.location.reload();
+        }
+    };
+
+    const fields = [
+        { name: 'playerName', label: 'Nombre', required: true },
+        { name: 'age', label: 'Edad', required: true },
+        { name: 'position', label: 'Posicion', required: true },
+        { name: 'number', label: 'Numero', required: true },
+        { name: 'foto', label: 'Seleccionar foto', required: true },
+    ];
+
+    const openModal = () => setIsModalOpen(true);
+    const closeModal = () => {
+        setIsModalOpen(false);
+        setFile(null);
+        setError('');
+    };
+
+    return (
+        <>
+            <button onClick={openModal}>Editar equipo</button>
+
+            {isModalOpen && (
+                <div className="form-window-overlay">
+                    <div className="form-window">
+                        <h1>Editar equipo</h1>
+                        <BasicForm 
+                            fields={fields} 
+                            onSubmit={handleEditTeam} 
+                            onCancel={closeModal} 
+                            setFile={setFile}
+                        />
+                        {error && <p className="error">{error}</p>}
+                    </div>
+                </div>
+            )}
+        </>
+    );
 }
 
 

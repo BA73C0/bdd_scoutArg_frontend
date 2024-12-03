@@ -257,8 +257,6 @@ function AdminEditTeamModal({ teamData }) {
             return;
         }
 
-        console.log("user", user);
-
         try {
             const { data } = await supabase.storage
                 .from('team-pictures')
@@ -270,8 +268,6 @@ function AdminEditTeamModal({ teamData }) {
                         Authorization: `Bearer ${user.token}`,
                     },
                 });
-
-            console.log('Uploaded data:', data);
 
         } catch (error) {
             setError('Error al cargar la imagen del equipo');

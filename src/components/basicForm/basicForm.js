@@ -28,30 +28,32 @@ const BasicForm = ({ fields, onSubmit, onCancel, setFile }) => {
 
     const handleSubmit = (e) => {
         e.preventDefault();
-        const hasFileField = fields.some(field => field.name === 'foto');
+        if (fields.length !== 0) {
+            const hasFileField = fields.some(field => field.name === 'foto');
 
-        for (const field of fields) {
-            if (field.name === 'foto') {
-                continue;
-            };
-            if (field.required && !formData[field.name]) {
-                setErrorMessage(`Por favor, completa el campo: ${field.label}`);
-                return;
+            for (const field of fields) {
+                if (field.name === 'foto') {
+                    continue;
+                };
+                if (field.required && !formData[field.name]) {
+                    setErrorMessage(`Por favor, completa el campo: ${field.label}`);
+                    return;
+                }
             }
-        }
 
-        const allFieldsOptional = fields.every(field => !field.required);
+            const allFieldsOptional = fields.every(field => !field.required);
 
-        if (allFieldsOptional) {
-            const isAnyFieldModified = fields.some(field =>
-                field.name === 'foto'
-                    ? hasFileField && file 
-                    : formData[field.name] !== field.value 
-            );
+            if (allFieldsOptional) {
+                const isAnyFieldModified = fields.some(field =>
+                    field.name === 'foto'
+                        ? hasFileField && file 
+                        : formData[field.name] !== field.value 
+                );
 
-            if (!isAnyFieldModified) {
-                setErrorMessage('Debes modificar al menos un campo para enviar el formulario.');
-                return;
+                if (!isAnyFieldModified) {
+                    setErrorMessage('Debes modificar al menos un campo para enviar el formulario.');
+                    return;
+                }
             }
         }
 
