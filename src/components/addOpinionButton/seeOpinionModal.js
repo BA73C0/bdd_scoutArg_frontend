@@ -5,9 +5,21 @@ import Table from '../table/table';
 import { API_URL } from '../../utils';
 import BasicForm from '../basicForm/basicForm';
 
-function SeeSelfOpinionModal({ opinion, onChange, onClose, onSubmit, table }) {
+function SeeOpinionModal({ opinion, onChange, onClose, onSubmit }) {
     const [isModalOpen1, setIsModalOpen1] = useState(false);
     const [isModalOpen2, setIsModalOpen2] = useState(false);
+    const [editAvaliable, setEditAvaliable] = useState(false);
+
+    const user = JSON.parse(localStorage.getItem('current_user'));
+
+    useEffect(() => {
+        if (opinion && user.id === opinion.user_id) {
+            setEditAvaliable(true);
+        } else {
+            setEditAvaliable(false);
+        }
+    }, [opinion, user]);
+    
     if (!opinion) return null;
 
     const handleStarClick = (rating) => {
@@ -16,61 +28,75 @@ function SeeSelfOpinionModal({ opinion, onChange, onClose, onSubmit, table }) {
 
     const openModal1 = () => setIsModalOpen1(!isModalOpen1);
     const openModal2 = () => setIsModalOpen2(!isModalOpen2);
-
     const closeSeeModal = () => {
         setIsModalOpen1(false);
         setIsModalOpen2(false);
         onClose();
     };
 
+    if (!opinion) {
+        return null;
+    }
+
     return (
         <div className="modal-overlay">
-            {isModalOpen2 && (
-                <Comment opinion={opinion} onClose={openModal2} table={table}/>
-            )}
+            {isModalOpen2 && <Comment opinion={opinion} onClose={openModal2} />}
             <div className="modal">
-                <h2>Editar Opinión</h2>
-                <textarea
-                    value={opinion.comentario}
-                    onChange={(e) => onChange({ ...opinion, comentario: e.target.value })}
-                />
-                
-                <div className="rating-container">
-                    <label>Puntuación:</label>
-                    <div className="stars">
-                        {[1, 2, 3, 4, 5].map((star) => (
-                            <span
-                                key={star}
-                                className={`star ${opinion.puntuacion >= star ? 'filled' : ''}`}
-                                onClick={() => handleStarClick(star)}
-                            >
-                                &#9733;
-                            </span>
-                        ))}
+                <>
+                    <h2>{editAvaliable ? 'Editar Opinión' : 'Opinión'}</h2>
+                    <textarea
+                        value={opinion.comentario}
+                        onChange={(e) =>
+                            editAvaliable && onChange({ ...opinion, comentario: e.target.value })
+                        }
+                        readOnly={!editAvaliable}
+                    />
+                    <div className="rating-container">
+                        <label>Puntuación:</label>
+                        <div className="stars">
+                            {[1, 2, 3, 4, 5].map((star) => (
+                                <span
+                                    key={star}
+                                    className={`star ${opinion.puntuacion >= star ? 'filled' : ''}`}
+                                    onClick={() => editAvaliable && handleStarClick(star)}
+                                >
+                                    &#9733;
+                                </span>
+                            ))}
+                        </div>
                     </div>
-                </div>
-
-                <div className="button-container">
-                    <button onClick={() => onSubmit(opinion)}>Guardar Cambios</button>
-                    <button onClick={openModal2}>Comentar</button>
-                    <button onClick={openModal1}>Ver comentarios</button>
-                    <button onClick={closeSeeModal} className="cancel-button" >Cancelar</button>
-                </div>
+                    <div className="button-container">
+                        <button onClick={openModal2}>Comentar</button>
+                        <button onClick={openModal1}>Ver comentarios</button>
+                    </div>
+                    {editAvaliable ? (
+                        <div className="button-container">
+                            <button onClick={() => onSubmit(opinion)}>Guardar Cambios</button>
+                            <button onClick={closeSeeModal} className="cancel-button">
+                                Cancelar
+                            </button>
+                        </div>
+                    ) : (
+                        <div className="button-container">
+                            <button onClick={closeSeeModal} className="cancel-button">
+                                Salir
+                            </button>
+                        </div>
+                    )}
+                </>
             </div>
-            {isModalOpen1 && (
-                <SeeComents opinion={opinion} table={table}/>
-            )}
+            {isModalOpen1 && <SeeComents opinion={opinion} />}
         </div>
     );
 }
 
-function SeeComents({ opinion, table }) {
+function SeeComents({ opinion }) {
     const [comments, setComments] = useState([]);
     const [error, setError] = useState(null);
 
     const fetchComments = async () => {
         try {
-            const commentResponse = await fetch(`${API_URL}/${table.name}/opinions/${opinion.id}/comments`);
+            const commentResponse = await fetch(`${API_URL}/players/opinions/${opinion.id}/comments`);
             if (!commentResponse.ok) {
                 throw new Error('Error fetching opinions');
             }
@@ -79,7 +105,7 @@ function SeeComents({ opinion, table }) {
             const formattedComments = commentsData.map(comment => ({
                 user_id: comment.created_at,
                 id: comment.player_opinion_id,
-                comentario: comment.opinion_text,
+                comentario: comment.comment_text,
                 created_at: comment.created_at,
             }));
             setComments(formattedComments);
@@ -88,29 +114,23 @@ function SeeComents({ opinion, table }) {
         } 
     };
 
-    useEffect(() => {
-        fetchComments();
-    }, []);
-
     const commentColumns = [
-        { name: 'Comentarios', isImage: false },
+        { name: 'Comentario', isImage: false },
     ];
 
     return (
         <div className="modal" style={{height: "380px", width: "400px", marginLeft: "10px"}}>
             <h2>Comentarios</h2>
-            <div style={{height: "280px"}}>
-                <Table 
-                    data={comments} 
-                    columns={commentColumns} 
-                    onRowClick={() => {}} 
-                />
-            </div>
+            <Table 
+                data={comments} 
+                columns={commentColumns} 
+                onRowClick={() => {}} 
+            />
         </div>
     );
 }
 
-function Comment({ opinion, onClose, table }) {
+function Comment({ opinion, onClose }) {
     const [error, setError] = useState(null);
     const user = JSON.parse(localStorage.getItem('current_user'));
 
@@ -122,11 +142,11 @@ function Comment({ opinion, onClose, table }) {
             created_at: new Date().toISOString(),
         };
 
-        console.log(json);
+        console.log(opinion);
 
         try {
             console.log(json);
-            const response = await fetch(`${API_URL}/${table.name}/opinions/${opinion.id}/comments`, {
+            const response = await fetch(`${API_URL}/players/opinions/${opinion.id}/comments`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -139,7 +159,6 @@ function Comment({ opinion, onClose, table }) {
                 await response.json();
                 setError('');
                 onClose()
-                window.location.reload();
             } else {
                 throw new Error('Error adding Comment');
             }
@@ -165,4 +184,4 @@ function Comment({ opinion, onClose, table }) {
     );
 }
 
-export default SeeSelfOpinionModal;
+export default SeeOpinionModal;
