@@ -1,14 +1,16 @@
-import React from 'react';
-import './table.css';
+import React from "react";
+import "./table.css";
 
 function StarRating({ rating }) {
-    const stars = [];
-    for (let i = 0; i < 5; i++) {
-        stars.push(
-            <span key={i} className={`star ${i < rating ? 'filled' : ''}`}>★</span>
-        );
-    }
-    return <div>{stars}</div>;
+  const stars = [];
+  for (let i = 0; i < 5; i++) {
+    stars.push(
+      <span key={i} className={`star ${i < rating ? "filled" : ""}`}>
+        ★
+      </span>
+    );
+  }
+  return <div>{stars}</div>;
 }
 
 function mapStrings(str) {
@@ -41,10 +43,13 @@ function Table({ data, columns, onRowClick, onImageError, redirect }) {
                                     {col.isImage ? (
                                         row[col.name.toLowerCase()] ? (
                                             <div className="table-card-logo">
-                                                <img 
-                                                    src={row[col.name.toLowerCase()]} 
-                                                    alt={col.name} 
-                                                    onError={onImageError}
+                                                <img
+                                                  src={
+                                                    row[col.name.toLowerCase()] +
+                                                    `?${new Date().getTime()}`
+                                                  }
+                                                  alt={col.name}
+                                                  onError={onImageError}
                                                 />
                                             </div>
                                         ) : (
