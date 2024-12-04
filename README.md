@@ -1,6 +1,5 @@
 ## Todo
 
-- Botones
 - [ ] Corregir errores de sintaxis y de importaciones no usadas
 - [ ] Probar la App
     - Buscar errores
