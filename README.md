@@ -4,9 +4,7 @@
 - [ ] Probar la App
     - Buscar errores
         - Casos borde
-- [ ] Llenar la BDD con equipos/jugadores/opiniones/comentarios
 - [ ] Arregar riesgos de npm ¿?
-- [ ] Hostearla¿?
 
 ## Authors
 
