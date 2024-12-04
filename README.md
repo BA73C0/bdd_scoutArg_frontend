@@ -1,12 +1,13 @@
 ## Todo
 
 - Botones
-    - [ ] Borrar opiniones (en SeeOpinions)
-        - hay q usar el BasicForm (similar al DeleteTeam en TeamPage)
-    - [ ] Unificar SeeOpinions y AddOpinions
-    - [ ] Falta SeeSelfOpinion (se puede editar) y SeeOpinion (no se puede editar)
 - [ ] Corregir errores de sintaxis y de importaciones no usadas
+- [ ] Probar la App
+    - Buscar errores
+        - Casos borde
+- [ ] Llenar la BDD con equipos/jugadores/opiniones/comentarios
 - [ ] Arregar riesgos de npm ¿?
+- [ ] Hostearla¿?
 
 ## Authors
 
