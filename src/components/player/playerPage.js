@@ -165,6 +165,7 @@ function PlayerPage() {
                 onChange={setSelectedOpinion}
                 onClose={closeOpinionForm}
                 table={{name: 'players'}}
+                teamOrPlayer={'players'}
             />
             
             <div className="button-container">

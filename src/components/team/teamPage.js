@@ -311,6 +311,7 @@ function TeamPage() {
                         onChange={setSelectedOpinion}
                         onClose={closeOpinionForm}
                         table={{name: 'teams'}}
+                        teamOrPlayer={'teams'}
                     />
                 </>
             )}
