@@ -705,7 +705,7 @@ function AdminAddPlayerModal() {
                     </div> 
                     : (
                     <div className="form-window-overlay">
-                        <div className="form-window">
+                        <div className="form-window" style={{margin: 'auto', width: '600px'}}>
                             <h1>Agregar jugador</h1>
                             <SearchBar 
                                 placeholder="Buscar jugador..." 
