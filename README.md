@@ -4,8 +4,6 @@
 - [ ] Probar la App
     - Buscar errores
         - Casos borde
-    - Cantidad de seguidores cambian aleatoriamente cada vez que se actualiza la pagina 
-    - Al registrarse con [Nombre nuevo, mail y contraseñas existentes] se inicia sesion manteniendo el nombre anterior
 - [ ] Arregar riesgos de npm ¿?
 
 ## Authors
