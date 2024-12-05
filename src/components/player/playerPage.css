@@ -28,6 +28,12 @@
     color: #ffffff;
 }
 
+.player-team {
+    font-size: 28px;
+    font-weight: bold;
+    color: #edf764;
+}
+
 .player-details {
     padding-left: 15px;
     display: flex;

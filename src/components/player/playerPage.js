@@ -16,6 +16,7 @@ function PlayerPage() {
     const [opinions, setOpinions] = useState([]);
     const [selectedOpinion, setSelectedOpinion] = useState(null);
     const [isModalOpen, setIsModalOpen] = useState(false);
+    const navigate = useNavigate();
     const [error, setError] = useState(null);
     const [loading, setLoading] = useState(true);
     const user = JSON.parse(localStorage.getItem('current_user'));
@@ -167,6 +168,13 @@ function PlayerPage() {
         }
     };
 
+    const handleTeamClick = () => {
+        if (!playerData.team) {
+            return;
+        }
+        navigate(`/teams/${playerData.team.id}/${playerData.team.name}`);
+    }
+
     const closeOpinionForm = () => {
         setSelectedOpinion(null);
     };
@@ -190,6 +198,13 @@ function PlayerPage() {
                     onError={(e) => { e.target.src = '/jugador.png'; }}
                 />
                 <h1 className="player-name">{playerData.nombre}</h1>
+                <h2
+                    className="player-team"
+                    onClick={() => handleTeamClick()}
+                    style={{ cursor: playerData.team ? 'pointer' : 'default' }}
+                >
+                    {playerData.team ? `Equipo: ${playerData.team.name}` : 'Sin equipo'}
+                </h2>
                 <div className="player-details">
                     <span className="player-position">{playerData.posicion}</span>
                     <span className="player-number">Número: {playerData.numero}</span>

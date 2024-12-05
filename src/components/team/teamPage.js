@@ -590,111 +590,147 @@ function AdminDeleteTeamModal({ teamData }) {
   );
 }
 
-function AdminAddPlayerModal({ fetchPlayers }) {
-  const { teamId } = useParams();
-  const [error, setError] = useState("");
-  const user = JSON.parse(localStorage.getItem("current_user"));
-  const [isModalOpen, setIsModalOpen] = useState(false);
-  const { supabase } = useSupabase();
-  const [file, setFile] = useState(null);
+function AdminAddPlayerModal() {
+    const { supabase } = useSupabase();
+    const { teamId, teamName } = useParams();
+    const [players, setPlayers] = useState([]);
+    const [filteredPlayers, setFilteredPlayers] = useState([]);
+    const [playerSearch, setPlayerSearch] = useState('')
+    const [isLoading, setLoading] = useState(true);
+    const [isModalOpen, setIsModalOpen] = useState(false);
+    const [error, setError] = useState(null);
+    const navigate = useNavigate();
+    const user = JSON.parse(localStorage.getItem("current_user"));
 
-  if (user.id !== ADMIN_ID) {
-    return null;
-  }
+    const fetchPlayers = async () => {
+        setLoading(true);
+        try {
+            const response = await fetch(`${API_URL}/players/without-team`);
+            if (!response.ok) {
+                throw new Error('Error al obtener los jugadores');
+            }
+            const playerData = await response.json();
+            const formattedPlayers = await Promise.all(playerData.map(async (player) => {
+                const { data: imageData } = await supabase.storage
+                        .from("player-pictures")
+                        .getPublicUrl(player.id);
+                
+                return {
+                    edad: player.age,
+                    nombre: player.name,
+                    numero: player.number,
+                    posicion: player.position,
+                    id: player.id,
+                    foto: imageData.publicUrl,
+                };
+            }));
 
-  const uploadPlayerImage = async (playerId) => {
-    if (!file) {
-      setError("Por favor selecciona un archivo para subir");
-      return;
-    }
+            setPlayers(formattedPlayers);
+            setFilteredPlayers(formattedPlayers);
+        } catch (error) {
+            console.error('Error fetching teams:', error);
+        } finally {
+            setPlayerSearch('');
+            setLoading(false);
+        }  
+    };  
 
-    try {
-      const { data } = await supabase.storage
-        .from("player-pictures")
-        .upload(`${playerId}`, file, {
-          metadata: {
-            owner_id: user.id,
-          },
-          headers: {
-            Authorization: `Bearer ${user.token}`,
-          },
-        });
-    } catch (error) {
-      setError("Error al cargar la imagen del equipo");
-    }
-  };
-
-  const handleAddPlayer = async (formData) => {
-    const { playerName, age, position, number } = formData;
-
-    const json = {
-      name: playerName,
-      age: parseInt(age, 10),
-      position,
-      number: parseInt(number, 10),
-      team_id: teamId,
+    const handlePlayerSearch = (query) => {
+        setPlayerSearch(query);
+        const filtered = players.filter(player => player.nombre.toLowerCase().includes(query.toLowerCase()));
+        setFilteredPlayers(filtered);
     };
 
-    try {
-      const response = await fetch(`${API_URL}/players`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${user.token}`,
-        },
-        body: JSON.stringify(json),
-      });
-
-      if (response.ok) {
-        const player = await response.json();
-        await fetchPlayers();
-        await uploadPlayerImage(player.id);
-        setError("");
-        closeModal();
-      } else {
-        throw new Error("Error adding Player");
-      }
-    } catch (error) {
-      console.error("Error al agregar el jugador:", error);
-      setError("Error al agregar el jugador");
+    const handlePlayerClick = async (player) => {
+        const json = {
+            team_id: teamId,
+        };
+    
+        try {
+            const response = await fetch(`${API_URL}/players/${player.id}`, {
+                method: "PATCH",
+                headers: {
+                    "Content-Type": "application/json",
+                    Authorization: `Bearer ${user.token}`,
+                },
+                body: JSON.stringify(json),
+            });
+      
+            if (response.ok) {
+                await response.json();
+            } else {
+                console.error("Error al agregar el jugador al equipo:");
+                throw new Error("Error edditing player");
+            }
+        } catch (error) {
+            console.error("Error al agregar el jugador al equipo:", error);
+            setError("Error al agregar el jugador al equipo");
+        } finally {
+            setError("");
+            setIsModalOpen(false);
+            navigate(`/teams/${teamId}/${teamName}`);
+            window.location.reload();
+        }
     }
-  };
 
-  const fields = [
-    { name: "playerName", label: "Nombre", required: true },
-    { name: "age", label: "Edad", required: true },
-    { name: "position", label: "Posicion", required: true },
-    { name: "number", label: "Numero", required: true },
-    { name: "foto", label: "Seleccionar foto", required: true },
-  ];
+    const openModal = () => {
+      setIsModalOpen(true)
+      fetchPlayers()
+    };
 
-  const openModal = () => setIsModalOpen(true);
-  const closeModal = () => {
-    setIsModalOpen(false);
-    setFile(null);
-    setError("");
-  };
+    const closeModal = () => {
+        setLoading(false);
+        setIsModalOpen(false);
+        setError("");
+    };
 
-  return (
-    <>
-      <button onClick={openModal}>Agregar Jugador</button>
+    const playerColumns = [
+        { name: "Foto", isImage: true },
+        { name: "Nombre", isImage: false },
+        { name: "Posicion", isImage: false },
+        { name: "Numero", isImage: false },
+        { name: "Edad", isImage: false },
+    ];
 
+    return (
+        <>
+            <button onClick={() => openModal()}>Agregar jugador</button>
+    
             {isModalOpen && (
-                <div className="form-window-overlay">
-                    <div className="form-window">
-                        <h1>Agregar nuevo jugador</h1>
-                        <BasicForm 
-                            fields={fields} 
-                            onSubmit={handleAddPlayer} 
-                            onCancel={closeModal} 
-                            setImage={true}
-                            setFile={setFile}
-                        />
+                isLoading ? 
+                    <div className="form-window-overlay">
+                        <div className="form-window">
+                            <LoadingSpinner />
+                        </div>
+                    </div> 
+                    : (
+                    <div className="form-window-overlay">
+                        <div className="form-window">
+                            <h1>Agregar jugador</h1>
+                            <SearchBar 
+                                placeholder="Buscar jugador..." 
+                                value={playerSearch} 
+                                onSearch={handlePlayerSearch} 
+                            />
+                            <Table 
+                                data={filteredPlayers} 
+                                columns={playerColumns} 
+                                onRowClick={handlePlayerClick} 
+                                onImageError={(e) => { e.target.src = '/jugador.png'; }}
+                                redirect={true}
+                            />
+                            <div className="button-container">
+                                <button onClick={closeModal} className="cancel-button">
+                                    Cancelar
+                                </button>
+                            </div>
+                        </div>
                     </div>
-                </div>
+                )
             )}
         </>
     );
+  
 }
 
 export default TeamPage;
