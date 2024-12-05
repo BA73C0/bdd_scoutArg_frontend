@@ -18,6 +18,7 @@ function PlayerPage() {
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [error, setError] = useState(null);
     const [loading, setLoading] = useState(true);
+    const user = JSON.parse(localStorage.getItem('current_user'));
 
     const fetchOpinions = async () => {
         setLoading(true);
@@ -109,6 +110,37 @@ function PlayerPage() {
         }
     };
 
+    const hanldeEditOpinion = async (opinion) => {
+        const json = {
+            opinion_text: opinion.comentario,
+            rating: opinion.puntuacion,
+            player_id: playerId,
+            created_at: new Date().toISOString(),
+        };
+
+        try {
+            const response = await fetch(`${API_URL}/players/opinions/${opinion.id}`, {
+                method: "PATCH",
+                headers: {
+                    "Content-Type": "application/json",
+                    Authorization: `Bearer ${user.token}`,
+                },
+                body: JSON.stringify(json),
+            });
+
+            if (response.ok) {
+                await fetchOpinions(); 
+            } else {
+                throw new Error('Error editing opinion');
+            }
+        } catch (err) {
+            setError(err.message);
+        } finally {
+            setSelectedOpinion(null);
+            //window.location.reload();
+        }
+    };
+
     const handleOpinionClick = (opinion) => {
         setSelectedOpinion(opinion);
     }
@@ -164,8 +196,8 @@ function PlayerPage() {
                 opinion={selectedOpinion}
                 onChange={setSelectedOpinion}
                 onClose={closeOpinionForm}
-                table={{name: 'players'}}
                 teamOrPlayer={'players'}
+                onSubmit={hanldeEditOpinion}
             />
             
             <div className="button-container">

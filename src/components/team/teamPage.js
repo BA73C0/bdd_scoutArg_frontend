@@ -168,9 +168,6 @@ function TeamPage() {
 
   useEffect(() => {
     fetchData();
-
-    const randomOffset = Math.floor(Math.random() * (10 - 20 + 1)) + 300;
-    setFollowerOffset(randomOffset);
   }, [teamId]);
 
   if (loading) {
@@ -218,6 +215,38 @@ function TeamPage() {
       }
   };
 
+    const hanldeEditOpinion = async (opinion) => {
+        const json = {
+            user_id: user.id,
+            opinion_text: opinion.comentario,
+            rating: opinion.puntuacion,
+            team_id: teamId,
+            created_at: new Date().toISOString(),
+        };
+
+        try {
+            const response = await fetch(`${API_URL}/teams/opinions/${opinion.id}`, {
+                method: "PATCH",
+                headers: {
+                    "Content-Type": "application/json",
+                    Authorization: `Bearer ${user.token}`,
+                },
+                body: JSON.stringify(json),
+            });
+
+            if (response.ok) {
+                await fetchOpinions(); 
+            } else {
+                throw new Error('Error adding opinion');
+            }
+        } catch (err) {
+            setError(err.message);
+        } finally {
+            setSelectedOpinion(null);
+            window.location.reload();
+        }
+    };
+
   const handleOpinionClick = (opinion) => {
     setSelectedOpinion(opinion);
   }
@@ -256,7 +285,7 @@ function TeamPage() {
                 <h1 className="team-name">{teamData.nombre}</h1>
                 <div className="rating-container">
                     <div className="stars" onClick={() => handleStarClick()} style={{cursor: "pointer"}}>
-                        <h3 className="team-name" style={{marginRight: "50px"}}>Seguidores: {followerOffset  + teamData.seguidores.length}</h3>
+                        <h3 className="team-name" style={{marginRight: "50px"}}>Seguidores: {teamData.seguidores.length}</h3>
                         {[1].map((star) => (
                             <span
                                 key={star}
@@ -310,7 +339,7 @@ function TeamPage() {
                         opinion={selectedOpinion}
                         onChange={setSelectedOpinion}
                         onClose={closeOpinionForm}
-                        table={{name: 'teams'}}
+                        onSubmit={hanldeEditOpinion}
                         teamOrPlayer={'teams'}
                     />
                 </>

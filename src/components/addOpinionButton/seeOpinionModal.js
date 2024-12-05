@@ -4,11 +4,14 @@ import { useState, useEffect } from 'react';
 import Table from '../table/table';
 import { API_URL, ADMIN_ID } from '../../utils';
 import BasicForm from '../basicForm/basicForm';
+import LoadingSpinner from '../loadingSpinner/loadingSpinner';
 
 function SeeOpinionModal({ opinion, onChange, onClose, onSubmit, teamOrPlayer }) {
+    const [originalOpinion, setOriginalOpinion] = useState(null);
     const [isModalOpen1, setIsModalOpen1] = useState(false);
     const [isModalOpen2, setIsModalOpen2] = useState(false);
     const [editAvaliable, setEditAvaliable] = useState(false);
+    const [error, setError] = useState(null);
 
     const user = JSON.parse(localStorage.getItem('current_user'));
 
@@ -19,11 +22,36 @@ function SeeOpinionModal({ opinion, onChange, onClose, onSubmit, teamOrPlayer })
             setEditAvaliable(false);
         }
     }, [opinion, user]);
-    
+
+    useEffect(() => {
+        if (opinion && !originalOpinion) {
+            setOriginalOpinion(opinion);
+        }
+    }, [opinion]);
+
     if (!opinion) return null;
 
     const handleStarClick = (rating) => {
+        setError('');
         onChange({ ...opinion, puntuacion: rating });
+    };
+
+    const handleTextChange = (e) => {
+        setError('');
+        onChange({ ...opinion, comentario: e.target.value });
+    };
+
+    const handleOpinionEdit = () => {
+        if (
+            originalOpinion &&
+            originalOpinion.comentario === opinion.comentario &&
+            originalOpinion.puntuacion === opinion.puntuacion
+        ) {
+            setError('No se han realizado cambios');
+            return;
+        }
+
+        onSubmit(opinion);
     };
 
     const openModal1 = () => setIsModalOpen1(!isModalOpen1);
@@ -34,26 +62,20 @@ function SeeOpinionModal({ opinion, onChange, onClose, onSubmit, teamOrPlayer })
         onClose();
     };
 
-    if (!opinion) {
-        return null;
-    }
-
     return (
         <div className="modal-overlay">
-            {isModalOpen2 && <Comment opinion={opinion} onClose={openModal2} />}
+            {isModalOpen2 && <Comment opinion={opinion} onClose={openModal2} whereTo={teamOrPlayer} />}
             <div className="modal">
                 <>
                     {user.id === ADMIN_ID && (
                         <div className="button-container">
-                            <DeleteOpinion opinion={opinion} onClose={closeSeeModal} whereTo={teamOrPlayer}/>
+                            <DeleteOpinion opinion={opinion} onClose={closeSeeModal} whereTo={teamOrPlayer} />
                         </div>
                     )}
                     <h2>{editAvaliable ? 'Editar Opinión' : 'Opinión'}</h2>
                     <textarea
                         value={opinion.comentario}
-                        onChange={(e) =>
-                            editAvaliable && onChange({ ...opinion, comentario: e.target.value })
-                        }
+                        onChange={(e) => editAvaliable && handleTextChange(e)}
                         readOnly={!editAvaliable}
                     />
                     <div className="rating-container">
@@ -70,6 +92,7 @@ function SeeOpinionModal({ opinion, onChange, onClose, onSubmit, teamOrPlayer })
                             ))}
                         </div>
                     </div>
+                    {error && <p className="error" style={{ fontSize: '20px' }}>{error}</p>}
                     <div className="button-container">
                         <button onClick={openModal2}>Comentar</button>
                         <button onClick={openModal1}>Ver comentarios</button>
@@ -77,13 +100,13 @@ function SeeOpinionModal({ opinion, onChange, onClose, onSubmit, teamOrPlayer })
                     {editAvaliable ? (
                         <>
                             <div className="button-container">
-                                <button onClick={() => onSubmit(opinion)}>Guardar Cambios</button>
+                                <button onClick={handleOpinionEdit}>Guardar Cambios</button>
                                 <button onClick={closeSeeModal} className="cancel-button">
                                     Cancelar
                                 </button>
                             </div>
                             <div className="button-container">
-                                <DeleteOpinion opinion={opinion} onClose={closeSeeModal} whereTo={teamOrPlayer}/>
+                                <DeleteOpinion opinion={opinion} onClose={closeSeeModal} whereTo={teamOrPlayer} />
                             </div>
                         </>
                     ) : (
@@ -100,6 +123,7 @@ function SeeOpinionModal({ opinion, onChange, onClose, onSubmit, teamOrPlayer })
     );
 }
 
+
 function SeeComents({ opinion, whereTo }) {
     const [comments, setComments] = useState([]);
     const [error, setError] = useState(null);
@@ -108,7 +132,7 @@ function SeeComents({ opinion, whereTo }) {
 
     const fetchComments = async () => {
         try {
-            const commentResponse = await fetch(`${API_URL}/players/opinions/${opinion.id}/comments`);
+            const commentResponse = await fetch(`${API_URL}/${whereTo}/opinions/${opinion.id}/comments`);
             if (!commentResponse.ok) {
                 throw new Error('Error fetching opinions');
             }
@@ -187,6 +211,10 @@ function SeeComents({ opinion, whereTo }) {
         );
     }
 
+    useEffect(() => {
+        fetchComments();
+    }, []);
+
     return (
         <div className="modal" style={{height: "380px", width: "400px", marginLeft: "10px"}}>
             <h2>Comentarios</h2>
@@ -199,7 +227,7 @@ function SeeComents({ opinion, whereTo }) {
     );
 }
 
-function Comment({ opinion, onClose }) {
+function Comment({ opinion, onClose, whereTo }) {
     const [error, setError] = useState(null);
     const user = JSON.parse(localStorage.getItem('current_user'));
 
@@ -207,13 +235,13 @@ function Comment({ opinion, onClose }) {
         const { commentario } = formData;
 
         const json = {
-            opinion_text: commentario,
+            comment_text: commentario,
             created_at: new Date().toISOString(),
         };
 
         try {
             console.log(json);
-            const response = await fetch(`${API_URL}/players/opinions/${opinion.id}/comments`, {
+            const response = await fetch(`${API_URL}/${whereTo}/opinions/${opinion.id}/comments`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -255,14 +283,16 @@ function DeleteOpinion({ opinion, onClose, whereTo }) {
     const [error, setError] = useState("");
     const [isModalOpen, setIsModalOpen] = useState(false);
     const user = JSON.parse(localStorage.getItem("current_user"));
+    const [isLoading, setIsLoading] = useState(false);
 
     const handleDeleteOpinion = async () => {
+        setIsLoading(true);
         try {
             const response = await fetch(`${API_URL}/${whereTo}/opinions/${opinion.id}`, {
                 method: "DELETE",
                 headers: {
-                "Content-Type": "application/json",
-                Authorization: `Bearer ${user.token}`,
+                    "Content-Type": "application/json",
+                    Authorization: `Bearer ${user.token}`,
                 },
             });
 
@@ -271,12 +301,15 @@ function DeleteOpinion({ opinion, onClose, whereTo }) {
             }
 
             await response.json();
-
-            setError("");
-            closeModal();
         } catch (error) {
             console.error("Error al borrar la opinion:", error);
             setError("Error al borrar la opinion");
+        } finally {
+            setIsLoading(false);
+            setError("");
+            window.location.reload();
+            onClose();
+            closeModal();
         }
     };
 
@@ -286,22 +319,33 @@ function DeleteOpinion({ opinion, onClose, whereTo }) {
         setError("");
     };
 
+    if (isLoading) {
+        return (
+            <div className="form-window-overlay">
+                <div className="form-window">
+                    <h1>Borrar opinion</h1>
+                    <LoadingSpinner />
+                </div>
+            </div>
+        );
+    }
+
     return (
         <>
         <button onClick={openModal} className="cancel-button">Borrar opinion</button>
 
         {isModalOpen && (
             <div className="form-window-overlay">
-            <div className="form-window">
-                <h1>Borrar opinion</h1>
-                <p>¿Estas seguro que quieres borrar esta opinión?</p>
-                <BasicForm
-                onSubmit={handleDeleteOpinion}
-                onCancel={closeModal}
-                fields={[]}
-                setImage={false}
-                />
-            </div>
+                <div className="form-window">
+                    <h1>Borrar opinion</h1>
+                    <p>¿Estas seguro que quieres borrar esta opinión?</p>
+                    <BasicForm
+                    onSubmit={handleDeleteOpinion}
+                    onCancel={closeModal}
+                    fields={[]}
+                    setImage={false}
+                    />
+                </div>
             </div>
         )}
         </>
