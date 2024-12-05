@@ -62,6 +62,10 @@ function Table({ data, columns, onRowClick, onImageError, redirect }) {
                                         )
                                     ) : col.name === 'Puntuación' ? (
                                         <StarRating rating={row.puntuacion} />
+                                    ) : col.name === 'Equipo' ? (
+                                        <div className="table-card-subcontainer">
+                                            {row.team? row.team.name : 'Sin equipo'} 
+                                        </div>
                                     ) : (
                                         <div className="table-card-subcontainer">
                                             {row[mapStrings(col.name)]}

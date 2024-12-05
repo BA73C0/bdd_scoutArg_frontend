@@ -62,13 +62,14 @@ function BodyHome() {
                 const { data: imageData } = await supabase.storage
                         .from("player-pictures")
                         .getPublicUrl(player.id);
-                
+
                 return {
                     edad: player.age,
                     nombre: player.name,
                     numero: player.number,
                     posicion: player.position,
                     id: player.id,
+                    team: player.team,
                     foto: imageData.publicUrl,
                 };
             }));
@@ -122,11 +123,14 @@ function BodyHome() {
         { name: "Posicion", isImage: false },
         { name: "Numero", isImage: false },
         { name: "Edad", isImage: false },
+        { name: "Equipo", isImage: false },
     ];
 
     if (loading) {
         return <LoadingSpinner />;
     }
+
+    console.log(filteredPlayers);
 
     return (
         <section className="body-home">
