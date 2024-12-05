@@ -20,6 +20,9 @@ function PlayerPage() {
     const [error, setError] = useState(null);
     const [loading, setLoading] = useState(true);
     const user = JSON.parse(localStorage.getItem('current_user'));
+    const userData = JSON.parse(localStorage.getItem('current_user_data'));
+
+    console.log(userData);
 
     const fetchOpinions = async () => {
         setLoading(true);
@@ -36,7 +39,8 @@ function PlayerPage() {
                 comentario: opinion.opinion_text,
                 player_id: opinion.player_id,
                 puntuacion: opinion.rating,
-                user_id: opinion.user_id
+                user_id: opinion.user_id,
+                autor: opinion.author
             }));
             setOpinions(formattedOpinions);
         } catch (err) {
@@ -87,6 +91,7 @@ function PlayerPage() {
             rating: puntuacion,
             player_id: playerId,
             created_at: new Date().toISOString(),
+            author: userData.name
         };
 
         const user = JSON.parse(localStorage.getItem('current_user'));
@@ -117,6 +122,7 @@ function PlayerPage() {
             rating: opinion.puntuacion,
             player_id: playerId,
             created_at: new Date().toISOString(),
+            author: userData.name
         };
 
         try {
@@ -180,6 +186,7 @@ function PlayerPage() {
     };
 
     const opinionColumns = [
+        { name: 'Autor', isImage: false },
         { name: 'Comentario', isImage: false },
         { name: 'Puntuación', isImage: false },
     ];

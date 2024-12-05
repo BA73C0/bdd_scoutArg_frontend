@@ -107,9 +107,9 @@ function BodyHome() {
 
     const handlePlayerClick = (player) => {
         if (player.team) {
-            navigate(`/teams/${player.team.name}/${player.team.id}/${player.team.name}/${player.id}/${player.name}`);
+            navigate(`/teams/${player.team.name}/${player.id}/${player.nombre}`);
         } else {
-            navigate(`/teams/No%20Asignado/${player.id}/${player.name}`);
+            navigate(`/teams/No%20Asignado/${player.id}/${player.nombre}`);
         }
     };
 
@@ -129,8 +129,6 @@ function BodyHome() {
     if (loading) {
         return <LoadingSpinner />;
     }
-
-    console.log(filteredPlayers);
 
     return (
         <section className="body-home">

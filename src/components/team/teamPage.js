@@ -27,7 +27,6 @@ function TeamPage() {
     const [follow, setFollow] = useState(false);
     const user = JSON.parse(localStorage.getItem("current_user"));
     const userData = JSON.parse(localStorage.getItem("current_user_data"));
-    const [followerOffset, setFollowerOffset] = useState(0);
 
     const fetchOpinions = async () => {
         setLoading(true);
@@ -44,6 +43,7 @@ function TeamPage() {
                 player_id: opinion.player_id,
                 puntuacion: opinion.rating,
                 user_id: opinion.user_id,
+                autor: opinion.author,
             }));
             setOpinions(formattedOpinions);
         } catch (err) {
@@ -193,6 +193,7 @@ function TeamPage() {
           rating: puntuacion,
           team_id: teamId,
           created_at: new Date().toISOString(),
+          author: userData.name
       };
 
       try {
@@ -222,6 +223,7 @@ function TeamPage() {
             rating: opinion.puntuacion,
             team_id: teamId,
             created_at: new Date().toISOString(),
+            author: userData.name
         };
 
         try {
@@ -289,6 +291,7 @@ function TeamPage() {
     { name: "Edad", isImage: false },
   ];
   const opinionColumns = [
+    { name: "Autor", isImage: false },
     { name: "Comentario", isImage: false },
     { name: "Puntuación", isImage: false },
   ];

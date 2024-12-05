@@ -159,6 +159,7 @@ function SeeComents({ opinion, whereTo }) {
     const [selectedComment, setSelectedComment] = useState(null);
     const [isLoading, setIsLoading] = useState(false);
     const user = JSON.parse(localStorage.getItem('current_user'));
+    const userData = JSON.parse(localStorage.getItem('current_user_data'));
 
     const fetchComments = async () => {
         try {
@@ -173,6 +174,7 @@ function SeeComents({ opinion, whereTo }) {
                 id: comment.id,
                 comentario: comment.comment_text,
                 created_at: comment.created_at,
+                autor: comment.author,
             }));
             setComments(formattedComments);
         } catch (err) {
@@ -217,6 +219,7 @@ function SeeComents({ opinion, whereTo }) {
         const json = {
             comment_text: comment.comentario,
             created_at: new Date().toISOString(),
+            author: userData.name
         };
 
         console.log(comment);
@@ -257,7 +260,10 @@ function SeeComents({ opinion, whereTo }) {
         fetchComments();
     }, []);
 
-    const commentColumns = [{ name: "Comentario", isImage: false }];
+    const commentColumns = [
+        { name: "Autor", isImage: false },
+        { name: "Comentario", isImage: false },
+    ];
 
     return (
         <div className="modal" style={{ height: "380px", width: "400px", marginLeft: "10px" }}>
@@ -297,6 +303,7 @@ function Comment({ opinion, onClose, whereTo }) {
     const [error, setError] = useState(null);
     const user = JSON.parse(localStorage.getItem('current_user'));
     const [isLoading, setIsLoading] = useState(false);
+    const userData = JSON.parse(localStorage.getItem('current_user_data'));
 
     const handleAddComment = async (formData) => {
         setIsLoading(true);
@@ -305,6 +312,7 @@ function Comment({ opinion, onClose, whereTo }) {
         const json = {
             comment_text: commentario,
             created_at: new Date().toISOString(),
+            author: userData.name
         };
 
         try {
