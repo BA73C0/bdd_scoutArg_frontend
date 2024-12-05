@@ -354,6 +354,7 @@ function Comment({ opinion, onClose, whereTo }) {
                 onSubmit={handleAddComment} 
                 onCancel={onClose} 
             />
+            {error && <p className="error">{error}</p>}
         </div>
     );
 }
@@ -400,6 +401,7 @@ function Delete({ opinion, onClose, mode, onDelete }) {
                     fields={[]}
                     setImage={false}
                     />
+                    {error && <p className="error">{error}</p>}
                 </div>
             </div>
         )}
