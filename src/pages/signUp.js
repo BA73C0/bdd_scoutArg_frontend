@@ -34,24 +34,31 @@ const SignUpPage = () => {
       });
 
       if (!registerReponse.ok) {
-        throw new Error('Error registrando usuario');
+        switch (registerReponse.status) {
+          case 409:
+            throw new Error('El email ya está en uso');
+          case 500:
+            throw new Error('Servidor no disponible\nIntente nuvamente más tarde');
+          default:
+            throw new Error('Error registrando usuario');
+        }
+      } else {
+        await registerReponse.json();
+        const json = {
+          email: email,
+          password: password,
+        };
+    
+        const success = await HandleLogIn(json, setError);
+        if (success) {
+          login(JSON.parse(localStorage.getItem('current_user')));
+          navigate('/teams');
+        }
       }
 
-      await registerReponse.json();
     } catch (error) {
-      setError('Error en el registro');
-    } finally {
-      const json = {
-        email: email,
-        password: password,
-      };
-  
-      const success = await HandleLogIn(json, setError);
-      if (success) {
-        login(JSON.parse(localStorage.getItem('current_user')));
-        navigate('/teams');
-      }
-    }
+      setError(error.message);
+    } 
   };
 
   const fields = [
@@ -66,7 +73,7 @@ const SignUpPage = () => {
       <div className="form-window">
         <h1>Registrarse</h1>
         <BasicForm fields={fields} onSubmit={handleSignUp} />
-        {error && <p style={{ color: 'red', maxWidth: '255px', textAlign: 'center', margin: 'auto', marginTop: '10px' }}>{error}</p>}
+        {error && <p style={{ fontSize: '20px', color: 'red', maxWidth: '255px', textAlign: 'center', margin: 'auto', marginTop: '10px' }}>{error}</p>}
         <p>Ya estás registrado? <a href="/sign-in" className="link">Iniciar sesión</a></p>
       </div>
     </div>
