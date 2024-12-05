@@ -6,8 +6,8 @@ import { API_URL, ADMIN_ID } from '../../utils';
 import BasicForm from '../basicForm/basicForm';
 import LoadingSpinner from '../loadingSpinner/loadingSpinner';
 
-function SeeOpinionModal({ opinion, onChange, onClose, onSubmit, teamOrPlayer }) {
-    const [originalOpinion, setOriginalOpinion] = useState(null);
+function SeeOpinionModal({ item, onChange, onClose, onSubmit, onDelete, whereTo, mode }) {
+    const [originalItem, setOriginalItem] = useState(null);
     const [isModalOpen1, setIsModalOpen1] = useState(false);
     const [isModalOpen2, setIsModalOpen2] = useState(false);
     const [editAvaliable, setEditAvaliable] = useState(false);
@@ -16,42 +16,50 @@ function SeeOpinionModal({ opinion, onChange, onClose, onSubmit, teamOrPlayer })
     const user = JSON.parse(localStorage.getItem('current_user'));
 
     useEffect(() => {
-        if (opinion && user.id === opinion.user_id) {
+        if (item && user.id === item.user_id) {
             setEditAvaliable(true);
         } else {
             setEditAvaliable(false);
         }
-    }, [opinion, user]);
+    }, [item, user]);
 
     useEffect(() => {
-        if (opinion && !originalOpinion) {
-            setOriginalOpinion(opinion);
+        if (item && !originalItem) {
+            setOriginalItem(item);
         }
-    }, [opinion]);
+    }, [item]);
 
-    if (!opinion) return null;
+    if (!item) return null;
 
     const handleStarClick = (rating) => {
         setError('');
-        onChange({ ...opinion, puntuacion: rating });
+        onChange({ ...item, puntuacion: rating });
     };
 
     const handleTextChange = (e) => {
         setError('');
-        onChange({ ...opinion, comentario: e.target.value });
+        onChange({ ...item, comentario: e.target.value });
     };
 
-    const handleOpinionEdit = () => {
+    const handleItemEdit = () => {
         if (
-            originalOpinion &&
-            originalOpinion.comentario === opinion.comentario &&
-            originalOpinion.puntuacion === opinion.puntuacion
+            mode === 'opinion' &&
+            originalItem &&
+            originalItem.comentario === item.comentario &&
+            originalItem.puntuacion === item.puntuacion
+        ) {
+            setError('No se han realizado cambios');
+            return;
+        } else if (
+            mode === 'comment' &&
+            originalItem &&
+            originalItem.comentario === item.comentario
         ) {
             setError('No se han realizado cambios');
             return;
         }
 
-        onSubmit(opinion);
+        onSubmit(item);
     };
 
     const openModal1 = () => setIsModalOpen1(!isModalOpen1);
@@ -64,49 +72,70 @@ function SeeOpinionModal({ opinion, onChange, onClose, onSubmit, teamOrPlayer })
 
     return (
         <div className="modal-overlay">
-            {isModalOpen2 && <Comment opinion={opinion} onClose={openModal2} whereTo={teamOrPlayer} />}
+            {isModalOpen2 && <Comment opinion={item} onClose={openModal2} whereTo={whereTo} />}
             <div className="modal">
                 <>
                     {user.id === ADMIN_ID && (
                         <div className="button-container">
-                            <DeleteOpinion opinion={opinion} onClose={closeSeeModal} whereTo={teamOrPlayer} />
+                            <Delete 
+                                opinion={item} 
+                                onClose={closeSeeModal} 
+                                mode={mode} 
+                                onDelete={onDelete}
+                            />
                         </div>
                     )}
-                    <h2>{editAvaliable ? 'Editar Opinión' : 'Opinión'}</h2>
+                    <h2>
+                        {editAvaliable
+                            ? mode === 'opinion'
+                                ? 'Editar opinión'
+                                : 'Editar comentario'
+                            : mode === 'opinion'
+                            ? 'Opinión'
+                            : 'Comentario'}
+                    </h2>
                     <textarea
-                        value={opinion.comentario}
+                        value={item.comentario}
                         onChange={(e) => editAvaliable && handleTextChange(e)}
-                        readOnly={!editAvaliable}
                     />
-                    <div className="rating-container">
-                        <label>Puntuación:</label>
-                        <div className="stars">
-                            {[1, 2, 3, 4, 5].map((star) => (
-                                <span
-                                    key={star}
-                                    className={`star ${opinion.puntuacion >= star ? 'filled' : ''}`}
-                                    onClick={() => editAvaliable && handleStarClick(star)}
-                                >
-                                    &#9733;
-                                </span>
-                            ))}
+                    {mode === 'opinion' && (
+                        <div className="rating-container">
+                            <label>Puntuación:</label>
+                            <div className="stars">
+                                {[1, 2, 3, 4, 5].map((star) => (
+                                    <span
+                                        key={star}
+                                        className={`star ${item.puntuacion >= star ? 'filled' : ''}`}
+                                        onClick={() => editAvaliable && handleStarClick(star)}
+                                    >
+                                        &#9733;
+                                    </span>
+                                ))}
+                            </div>
                         </div>
-                    </div>
+                    )}
                     {error && <p className="error" style={{ fontSize: '20px' }}>{error}</p>}
+                    {mode === 'opinion' && (
                     <div className="button-container">
                         <button onClick={openModal2}>Comentar</button>
                         <button onClick={openModal1}>Ver comentarios</button>
                     </div>
+                    )}
                     {editAvaliable ? (
                         <>
                             <div className="button-container">
-                                <button onClick={handleOpinionEdit}>Guardar Cambios</button>
+                                <button onClick={handleItemEdit}>Guardar Cambios</button>
                                 <button onClick={closeSeeModal} className="cancel-button">
                                     Cancelar
                                 </button>
                             </div>
                             <div className="button-container">
-                                <DeleteOpinion opinion={opinion} onClose={closeSeeModal} whereTo={teamOrPlayer} />
+                                <Delete 
+                                opinion={item} 
+                                onClose={closeSeeModal} 
+                                mode={mode} 
+                                onDelete={onDelete}
+                                />
                             </div>
                         </>
                     ) : (
@@ -118,17 +147,18 @@ function SeeOpinionModal({ opinion, onChange, onClose, onSubmit, teamOrPlayer })
                     )}
                 </>
             </div>
-            {isModalOpen1 && <SeeComents opinion={opinion} whereTo={teamOrPlayer} />}
+            {isModalOpen1 && <SeeComents opinion={item} whereTo={whereTo} />}
         </div>
     );
 }
 
-
 function SeeComents({ opinion, whereTo }) {
     const [comments, setComments] = useState([]);
     const [error, setError] = useState(null);
-    const user = JSON.parse(localStorage.getItem("current_user"));
     const [isModalOpen, setIsModalOpen] = useState(false);
+    const [selectedComment, setSelectedComment] = useState(null);
+    const [isLoading, setIsLoading] = useState(false);
+    const user = JSON.parse(localStorage.getItem('current_user'));
 
     const fetchComments = async () => {
         try {
@@ -139,90 +169,126 @@ function SeeComents({ opinion, whereTo }) {
             const commentsData = await commentResponse.json();
 
             const formattedComments = commentsData.map(comment => ({
-                user_id: comment.created_at,
-                id: comment.player_opinion_id,
+                user_id: comment.user_id,
+                id: comment.id,
                 comentario: comment.comment_text,
                 created_at: comment.created_at,
             }));
             setComments(formattedComments);
         } catch (err) {
             setError(err.message);
-        } 
+        }
     };
 
-    const commentColumns = [
-        { name: 'Comentario', isImage: false },
-    ];
-
     const handleCommentClick = (comment) => {
-        if (user.id !== ADMIN_ID && user.id !== comment.user_id) {
-            return;
-        }
+        setSelectedComment(comment);
+        setIsModalOpen(true); 
+    };
 
-        const handleDeleteOpinion = async () => {
-            try {
-                const response = await fetch(`${API_URL}/${whereTo}/opinions/${opinion.id}/comments/${comment.id}`, {
+    const deleteComment = async () => {
+        try {
+            const response = await fetch(`${API_URL}/${whereTo}/opinions/${opinion.id}/comments/${selectedComment.id}`,
+                {
                     method: "DELETE",
                     headers: {
-                    "Content-Type": "application/json",
-                    Authorization: `Bearer ${user.token}`,
+                        "Content-Type": "application/json",
+                        Authorization: `Bearer ${user.token}`,
                     },
-                });
-    
-                if (!response.ok) {
-                    throw new Error("Error deleting comment");
                 }
-    
-                await response.json();
-    
-                setError("");
+            );
+
+            if (!response.ok) {
+                throw new Error("Error deleting comment");
+            } else {
+                setError(null);
+                setComments((prevComments) =>
+                    prevComments.filter((comment) => comment.id !== selectedComment.id)
+                );
                 closeModal();
-            } catch (error) {
-                console.error("Error al borrar el comentario:", error);
-                setError("Error al borrar el comentario");
             }
+        } catch (error) {
+            console.error("Error al borrar el comentario:", error);
+            setError("Error al borrar el comentario");
+        }
+    };
+
+    const editComment = async (comment) => {
+        setIsLoading(true);
+        const json = {
+            comment_text: comment.comentario,
+            created_at: new Date().toISOString(),
         };
 
-        const openModal = () => setIsModalOpen(true);
-        const closeModal = () => {
-            setIsModalOpen(false);
-            setError("");
-        };
+        console.log(comment);
 
-        return (
-            <>
-            <button onClick={openModal} className="cancel-button">Borrar comentario</button>
-    
-            {isModalOpen && (
-                <div className="form-window-overlay">
-                <div className="form-window">
-                    <h1>Borrar comentario</h1>
-                    <p>¿Estas seguro que quieres borrar este comentario?</p>
-                    <BasicForm
-                    onSubmit={handleDeleteOpinion}
-                    onCancel={closeModal}
-                    fields={[]}
-                    setImage={false}
-                    />
-                </div>
-                </div>
-            )}
-            </>
-        );
-    }
+        try {
+            const response = await fetch(`${API_URL}/${whereTo}/opinions/${opinion.id}/comments/${comment.id}`, {
+                method: 'PATCH',
+                headers: {
+                    'Content-Type': 'application/json',
+                    Authorization: `Bearer ${user.token}`,
+                },
+                body: JSON.stringify(json),
+            });
+
+            if (response.ok) {
+                await response.json();
+                setError('');
+                fetchComments();
+                closeModal();
+            } else {
+                throw new Error('Error editing comment');
+            }
+        } catch (error) {
+            console.error('Error al editar el comentario:', error);
+            setError('Error al editar el comentario');
+        } finally {
+            setIsLoading(false);
+        }
+    };
+
+    const closeModal = () => {
+        setIsModalOpen(false);
+        setSelectedComment(null);
+        setError(null);
+    };
 
     useEffect(() => {
         fetchComments();
     }, []);
 
+    const commentColumns = [{ name: "Comentario", isImage: false }];
+
     return (
-        <div className="modal" style={{height: "380px", width: "400px", marginLeft: "10px"}}>
+        <div className="modal" style={{ height: "380px", width: "400px", marginLeft: "10px" }}>
             <h2>Comentarios</h2>
-            <Table 
-                data={comments} 
-                columns={commentColumns} 
-                onRowClick={handleCommentClick} 
+            <Table
+                data={comments}
+                columns={commentColumns}
+                onRowClick={handleCommentClick}
+                redirect={true}
             />
+
+            {isModalOpen && selectedComment && (
+                <>
+                {isLoading ? (
+                    <div className="form-window-overlay">
+                        <LoadingSpinner />
+                    </div>
+                ) : (
+                    <SeeOpinionModal
+                        item={selectedComment}
+                        onChange={setSelectedComment}
+                        onClose={closeModal}
+                        onSubmit={editComment}
+                        onDelete={deleteComment}
+                        whereTo={'teams'}
+                        mode={'comment'}
+                    />
+                )}
+                </>
+            )}
+            {error && <p className="error">{error}</p>}
         </div>
     );
 }
@@ -230,8 +296,10 @@ function SeeComents({ opinion, whereTo }) {
 function Comment({ opinion, onClose, whereTo }) {
     const [error, setError] = useState(null);
     const user = JSON.parse(localStorage.getItem('current_user'));
+    const [isLoading, setIsLoading] = useState(false);
 
     const handleAddComment = async (formData) => {
+        setIsLoading(true);
         const { commentario } = formData;
 
         const json = {
@@ -240,7 +308,6 @@ function Comment({ opinion, onClose, whereTo }) {
         };
 
         try {
-            console.log(json);
             const response = await fetch(`${API_URL}/${whereTo}/opinions/${opinion.id}/comments`, {
                 method: 'POST',
                 headers: {
@@ -254,6 +321,7 @@ function Comment({ opinion, onClose, whereTo }) {
                 await response.json();
                 setError('');
                 onClose()
+                setIsLoading(false);
             } else {
                 throw new Error('Error adding Comment');
             }
@@ -267,6 +335,17 @@ function Comment({ opinion, onClose, whereTo }) {
         { name: 'commentario', label: 'Commentario', required: true },
     ];
 
+    if (isLoading) {
+        return (
+            <div className="form-window-overlay">
+                <div className="form-window">
+                    <h1>Creando comentario</h1>
+                    <LoadingSpinner />
+                </div>
+            </div>
+        );
+    }
+
     return (
         <div className="modal" style={{width: "400px", marginRight: "10px"}}>
             <h2>Comentar</h2>
@@ -279,38 +358,17 @@ function Comment({ opinion, onClose, whereTo }) {
     );
 }
 
-function DeleteOpinion({ opinion, onClose, whereTo }) {
+function Delete({ opinion, onClose, mode, onDelete }) {
     const [error, setError] = useState("");
     const [isModalOpen, setIsModalOpen] = useState(false);
-    const user = JSON.parse(localStorage.getItem("current_user"));
     const [isLoading, setIsLoading] = useState(false);
 
-    const handleDeleteOpinion = async () => {
+    const deleteObjet = async () => {
         setIsLoading(true);
-        try {
-            const response = await fetch(`${API_URL}/${whereTo}/opinions/${opinion.id}`, {
-                method: "DELETE",
-                headers: {
-                    "Content-Type": "application/json",
-                    Authorization: `Bearer ${user.token}`,
-                },
-            });
-
-            if (!response.ok) {
-                throw new Error("Error deleting opinion");
-            }
-
-            await response.json();
-        } catch (error) {
-            console.error("Error al borrar la opinion:", error);
-            setError("Error al borrar la opinion");
-        } finally {
-            setIsLoading(false);
-            setError("");
-            window.location.reload();
-            onClose();
-            closeModal();
-        }
+        await onDelete(opinion);
+        setIsLoading(false);
+        onClose();
+        closeModal();
     };
 
     const openModal = () => setIsModalOpen(true);
@@ -322,25 +380,22 @@ function DeleteOpinion({ opinion, onClose, whereTo }) {
     if (isLoading) {
         return (
             <div className="form-window-overlay">
-                <div className="form-window">
-                    <h1>Borrar opinion</h1>
-                    <LoadingSpinner />
-                </div>
+                <LoadingSpinner />
             </div>
         );
     }
 
     return (
         <>
-        <button onClick={openModal} className="cancel-button">Borrar opinion</button>
+        <button onClick={openModal} className="cancel-button">{mode === 'opinion' ? 'Borrar opinion' : 'Borrar comentario'}</button>
 
         {isModalOpen && (
             <div className="form-window-overlay">
                 <div className="form-window">
-                    <h1>Borrar opinion</h1>
-                    <p>¿Estas seguro que quieres borrar esta opinión?</p>
+                    <h1>{mode === 'opinion' ? 'Borrar opinion' : 'Borrar comentario'}</h1>
+                    <p>¿Estas seguro que quieres borrar {mode === 'opinion' ? 'esta opinión' : 'este comentario'}?</p>
                     <BasicForm
-                    onSubmit={handleDeleteOpinion}
+                    onSubmit={deleteObjet}
                     onCancel={closeModal}
                     fields={[]}
                     setImage={false}

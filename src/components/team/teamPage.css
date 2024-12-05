@@ -82,6 +82,10 @@
     padding: 8px 16px;
     border: none;
     cursor: pointer;
-    background-color: #d9534f; 
+    background-color: #db5d59; 
     color: white;
+}
+
+.cancel-button:hover{
+    background-color: #df1811; 
 }

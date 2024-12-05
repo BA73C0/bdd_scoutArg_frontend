@@ -145,6 +145,28 @@ function PlayerPage() {
         setSelectedOpinion(opinion);
     }
 
+    const handleDeleteOpinion = async (opinion) => {
+        try {
+            const response = await fetch(`${API_URL}/players/opinions/${opinion.id}`, {
+                method: "DELETE",
+                headers: {
+                    "Content-Type": "application/json",
+                    Authorization: `Bearer ${user.token}`,
+                },
+            });
+    
+            if (!response.ok) {
+                throw new Error("Error deleting opinion");
+            }
+    
+            await response.json();
+        } catch (error) {
+            console.error("Error al borrar la opinion:", error);
+        } finally {
+            window.location.reload();
+        }
+    };
+
     const closeOpinionForm = () => {
         setSelectedOpinion(null);
     };
@@ -193,11 +215,13 @@ function PlayerPage() {
             />
 
             <SeeOpinionModal
-                opinion={selectedOpinion}
+                item={selectedOpinion}
                 onChange={setSelectedOpinion}
                 onClose={closeOpinionForm}
-                teamOrPlayer={'players'}
                 onSubmit={hanldeEditOpinion}
+                onDelete={handleDeleteOpinion}
+                whereTo={'players'}
+                mode={'opinion'}
             />
             
             <div className="button-container">
