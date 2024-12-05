@@ -33,7 +33,7 @@ function Landing() {
         <button onClick={handleSignUp} className="landing-home-button">Registrarse</button>
       </div>
       <div className="text-container">
-        <p> La mejor plataforma para la seguir el ascenso de tu equipo favorito. </p>
+        <p> La mejor plataforma para seguir el ascenso de tu equipo favorito. </p>
       </div>
     </div>
   );
