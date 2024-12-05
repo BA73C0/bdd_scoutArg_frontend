@@ -323,6 +323,9 @@ function TeamPage() {
                     </div>
                 </div>
             </header>
+
+            {error && <p className="error">{error}</p>}
+            
             <div className="display-table-options">
                 <button
                     className={`display-table-option ${selectedOption === 'Jugadores' ? '' : 'active'}`}
@@ -419,7 +422,7 @@ function AdminEditTeamModal({ teamData }) {
     try {
       if (teamData.escudo !== null) {
         // EDIT
-        const { data, error } = await supabase.storage
+        await supabase.storage
           .from("team-pictures")
           .update(teamId, file, {
             metadata: {
@@ -434,7 +437,7 @@ function AdminEditTeamModal({ teamData }) {
         }
       } else {
         // POST
-        const { data, error } = await supabase.storage
+        await supabase.storage
           .from("team-pictures")
           .upload(`${teamId}`, file, {
             metadata: {
@@ -586,6 +589,7 @@ function AdminDeleteTeamModal({ teamData }) {
               fields={[]}
               setImage={false}
             />
+            {error && <p className="error">{error}</p>}
           </div>
         </div>
       )}
@@ -731,6 +735,7 @@ function AdminAddPlayerModal() {
                     </div>
                 )
             )}
+            {error && <p className="error">{error}</p>}
         </>
     );
   

@@ -144,7 +144,6 @@ function PlayerPage() {
             setError(err.message);
         } finally {
             setSelectedOpinion(null);
-            //window.location.reload();
         }
     };
 
@@ -217,6 +216,9 @@ function PlayerPage() {
                     <span className="player-number">Número: {playerData.numero}</span>
                 </div>
             </header>
+
+            {error && <p className="error">{error}</p>}
+
             <div style={{width: "60%"}}>
                 <Table 
                     data={opinions} 
@@ -312,6 +314,7 @@ function AdminDeletePlayerModal({ playerData }) {
                             fields={[]}
                             setImage={false}
                         />
+                        {error && <p className="error">{error}</p>}
                     </div>
                 </div>
             )}
@@ -339,7 +342,7 @@ function AdminEditPlayerModal({ playerData }) {
         }
 
         try {
-            const { data } = await supabase.storage
+            await supabase.storage
                 .from('player-pictures')
                 .upload(`${playerId}`, file, {
                     metadata: {
@@ -418,7 +421,7 @@ function AdminEditPlayerModal({ playerData }) {
             {isModalOpen && (
                 <div className="form-window-overlay">
                     <div className="form-window">
-                        <h1>Editar equipo</h1>
+                        <h1>Editar Jugador</h1>
                         <BasicForm 
                             fields={fields} 
                             onSubmit={handleEditPlayer} 

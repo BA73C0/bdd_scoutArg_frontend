@@ -208,7 +208,7 @@ function AdminAddTeamModal({ fetchTeams }) {
         }
 
         try {
-            const { data } = await supabase.storage
+            await supabase.storage
                 .from('team-pictures')
                 .upload(`${teamId}`, file, {
                     metadata: {
@@ -281,6 +281,7 @@ function AdminAddTeamModal({ fetchTeams }) {
                             onCancel={closeModal} 
                             setFile={setFile}
                         />
+                        {error && <p className="error">{error}</p>}
                     </div>
                 </div>
             )}
@@ -306,7 +307,7 @@ function AdminAddPlayerModal({ fetchPlayers }) {
         }
     
         try {
-            const { data } = await supabase.storage
+            await supabase.storage
             .from("player-pictures")
             .upload(`${playerId}`, file, {
                 metadata: {
@@ -387,6 +388,7 @@ function AdminAddPlayerModal({ fetchPlayers }) {
                             setImage={true}
                             setFile={setFile}
                         />
+                        {error && <p className="error">{error}</p>}
                     </div>
                 </div>
             )}

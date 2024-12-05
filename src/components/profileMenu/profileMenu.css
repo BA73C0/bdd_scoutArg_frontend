@@ -12,9 +12,9 @@
 }
 
 .menu-dropdown {
-    display: flex;             /* Añadido para habilitar flexbox */
-    align-items: center;       /* Centrado vertical */
-    justify-content: center;   /* Centrado horizontal */
+    display: flex;
+    align-items: center;
+    justify-content: center;
     position: absolute;
     top: 95px; 
     right: 0;
