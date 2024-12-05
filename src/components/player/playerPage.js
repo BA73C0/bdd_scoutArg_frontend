@@ -414,7 +414,7 @@ function AdminEditPlayerModal({ playerData }) {
             {isModalOpen && (
                 <div className="form-window-overlay">
                     <div className="form-window">
-                        <h1>Editar equipo</h1>
+                        <h1>Editar Jugador</h1>
                         <BasicForm 
                             fields={fields} 
                             onSubmit={handleEditPlayer} 
