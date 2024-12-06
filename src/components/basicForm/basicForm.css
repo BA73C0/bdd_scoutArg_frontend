@@ -75,3 +75,18 @@ button:hover {
 input[type="file"] {
     display: none;
 }
+
+.dropdown-container {
+    position: relative;
+}
+
+select {
+    width: 100%;
+    padding: 10px;
+    font-size: 20px;
+    color: #004906;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    text-align: center;
+}
+
