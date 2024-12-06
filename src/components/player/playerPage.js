@@ -69,7 +69,10 @@ function PlayerPage() {
         const { data } = await supabase.storage
           .from("player-pictures")
           .getPublicUrl(playerData.id);
-
+        const response = await fetch(data.publicUrl);
+        if (!response.ok) {
+          data.publicUrl = null;
+        }
         setPlayerData({
           foto: data.publicUrl,
           nombre: playerData.name,
@@ -210,7 +213,7 @@ function PlayerPage() {
     <section className="player-home">
       <header className="player-header">
         <img
-          src={playerData.foto}
+          src={playerData.foto + `?${new Date().getTime()}`}
           alt={`${playerData.nombre} foto`}
           className="player-picture"
           onError={(e) => {
@@ -398,7 +401,7 @@ function AdminEditPlayerModal({ playerData }) {
       if (response.ok) {
         await response.json();
         if (file) {
-          await uploadPlayerImage(playerId);
+          await uploadPlayerImage(playerId, playerData);
         }
       } else {
         console.error("Error al editar el equipo:");
@@ -415,23 +418,43 @@ function AdminEditPlayerModal({ playerData }) {
     }
   };
 
-  const uploadPlayerImage = async (playerId) => {
+  const uploadPlayerImage = async (playerId, playerData) => {
     if (!file) {
       setError("Por favor selecciona un archivo para subir");
       return;
     }
-
     try {
-      await supabase.storage
-        .from("player-pictures")
-        .upload(`${playerId}`, file, {
-          metadata: {
-            owner_id: user.id,
-          },
-          headers: {
-            Authorization: `Bearer ${user.token}`,
-          },
-        });
+      if (playerData.foto !== null) {
+        // EDIT
+        await supabase.storage
+          .from("player-pictures")
+          .update(playerId, file, {
+            metadata: {
+              owner_id: user.id,
+            },
+            headers: {
+              Authorization: `Bearer ${user.token}`,
+            },
+          });
+        if (error) {
+          throw new Error("Error updating Player Image");
+        }
+      } else {
+        // POST
+        await supabase.storage
+          .from("player-pictures")
+          .upload(`${playerId}`, file, {
+            metadata: {
+              owner_id: user.id,
+            },
+            headers: {
+              Authorization: `Bearer ${user.token}`,
+            },
+          });
+        if (error) {
+          throw new Error("Error uploading Player Image");
+        }
+      }
     } catch (error) {
       setError("Error al cargar la imagen del jugador");
     }

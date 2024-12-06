@@ -72,7 +72,10 @@ function TeamPage() {
                     const { data: imageData } = await supabase.storage
                         .from("player-pictures")
                         .getPublicUrl(playerData.id);
-
+                    const response = await fetch(imageData.publicUrl);
+                    if (!response.ok) {
+                        imageData.publicUrl = null;
+                    }
                     return {
                         edad: playerData.age,
                         nombre: playerData.name,
@@ -102,10 +105,13 @@ function TeamPage() {
             }
             const teamData = await teamResponse.json();
 
-            const { data } = await supabase.storage
+            const { data, error } = await supabase.storage
                 .from("team-pictures")
                 .getPublicUrl(teamData.id);
-
+            const response = await fetch(data.publicUrl);
+            if (!response.ok) {
+                data.publicUrl = null;
+            }
             setTeamData({
                 escudo: data.publicUrl,
                 nombre: teamData.name,
@@ -138,8 +144,6 @@ function TeamPage() {
         json.team_id = teamId;
         userData.team_id = teamId;
     }
-
-    console.log(json);
 
     try {
       const response = await fetch(`${API_URL}/users`, {
@@ -623,7 +627,10 @@ function AdminAddPlayerModal() {
                 const { data: imageData } = await supabase.storage
                         .from("player-pictures")
                         .getPublicUrl(player.id);
-                
+                const response = await fetch(imageData.publicUrl);
+                if (!response.ok) {
+                    imageData.publicUrl = null;
+                }
                 return {
                     edad: player.age,
                     nombre: player.name,

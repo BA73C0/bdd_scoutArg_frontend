@@ -222,8 +222,6 @@ function SeeComents({ opinion, whereTo }) {
             author: userData.name
         };
 
-        console.log(comment);
-
         try {
             const response = await fetch(`${API_URL}/${whereTo}/opinions/${opinion.id}/comments/${comment.id}`, {
                 method: 'PATCH',
