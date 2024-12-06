@@ -305,10 +305,10 @@ function Comment({ opinion, onClose, whereTo }) {
 
     const handleAddComment = async (formData) => {
         setIsLoading(true);
-        const { commentario } = formData;
+        const { comentario } = formData;
 
         const json = {
-            comment_text: commentario,
+            comment_text: comentario,
             created_at: new Date().toISOString(),
             author: userData.name
         };
@@ -338,7 +338,7 @@ function Comment({ opinion, onClose, whereTo }) {
     };
 
     const fields = [
-        { name: 'commentario', label: 'Commentario', required: true },
+        { name: 'comentario', label: 'Comentario', required: true },
     ];
 
     if (isLoading) {

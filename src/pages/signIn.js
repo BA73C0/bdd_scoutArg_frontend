@@ -40,7 +40,7 @@ const SignInPage = () => {
         <h1>Iniciar sesión</h1>
         <BasicForm fields={fields} onSubmit={handleSignIn} />
         {error && <p style={{ color: 'red', maxWidth: '255px', textAlign: 'center', margin: 'auto', marginTop: '10px' }}>{error}</p>}
-        <p>Todavía no estás registrado? <a href="/sign-up" className="link">Registrarse</a></p>
+        <p>¿Todavía no estás registrado? <a href="/sign-up" className="link">Registrarse</a></p>
       </div>
     </div>
   );
