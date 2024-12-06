@@ -20,19 +20,16 @@ function ProfileMenu() {
     };
 
     return (
-        <div>
-            <div>
-                <button onClick={toggleMenu} className="menu-button">
-                    <FontAwesomeIcon icon={faEllipsis} />
-                </button>
-                {isMenuOpen && (
-                    <div className="menu-dropdown">
-                        <button onClick={handleLogOut} className="menu-item">LogOut</button>
-                    </div>
-                )}
-
-            </div>
-        </div>
+        <>
+            <button onClick={toggleMenu} className="menu-button">
+                <FontAwesomeIcon icon={faEllipsis} />
+            </button>
+            {isMenuOpen && (
+                <div className="menu-dropdown">
+                    <button onClick={handleLogOut} className="menu-item">LogOut</button>
+                </div>
+            )}
+        </>
     );
 }
 
