@@ -293,20 +293,18 @@ function AdminDeletePlayerModal({ playerData }) {
           Authorization: `Bearer ${user.token}`,
         },
       });
-
+      
       if (!response.ok) {
         throw new Error("Error deleting player");
       }
-
-      await response.json();
-
+      
       setError("");
       closeModal();
     } catch (error) {
       console.error("Error al borrar el jugador:", error);
       setError("Error al  al borrar el jugador");
     }
-    navigate(`/teams/${playerData.team.id}/${playerData.team.name}`);
+    navigate(`/teams`);
   };
 
   const openModal = async () => {
