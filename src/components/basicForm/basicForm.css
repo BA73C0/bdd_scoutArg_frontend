@@ -76,21 +76,8 @@ input[type="file"] {
     display: none;
 }
 
-/* Added styles for the dropdown with search functionality */
 .dropdown-container {
     position: relative;
-}
-
-.dropdown-search {
-    width: 100%;
-    padding: 10px;
-    font-size: 20px;
-    border: 1px solid #ccc;
-    border-radius: 4px;
-    text-align: center;
-    cursor: pointer;
-    margin-bottom: 10px;
-    color: #004906;
 }
 
 select {
@@ -103,81 +90,3 @@ select {
     text-align: center;
 }
 
-
-/* .form-container {
-    display: flex;
-    flex-direction: column;
-    gap: 15px;
-    margin: auto;
-}
-
-.form-group {
-    display: flex;
-    flex-direction: column;
-}
-
-.form-group input {
-    padding: 10px;
-    font-size: 20px;
-    color: #004906;
-    border: 1px solid #ccc;
-    border-radius: 4px;
-    text-align: center;
-}
-
-button {
-    width: 400px;
-    padding: 12px;
-    font-size: 16px;
-    background-color:#004906;
-    color: white;
-    border: none;
-    border-radius: 4px;
-    cursor: pointer;
-    margin-top: 10px;
-}
-
-button:hover {
-    background-color: #0cac19;
-}
-
-.error {
-    color: red;
-    font-size: 14px;
-    margin-top: 10px;
-    text-align: center;
-}
-
-.button-container {
-    width: 100%;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    margin: auto;
-}
-  
-.file-upload {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-}
-
-.custom-file-upload {
-    margin-top: 10px;
-    padding: 10px;
-    font-size: 20px;
-    color: white;
-    border: 1px solid #ccc;
-    border-radius: 4px;
-    text-align: center;
-    cursor: pointer;
-    background-color: #4CAF50;
-}
-
-.custom-file-upload:hover {
-    opacity: 0.9;
-}
-
-input[type="file"] {
-    display: none;
-} */
