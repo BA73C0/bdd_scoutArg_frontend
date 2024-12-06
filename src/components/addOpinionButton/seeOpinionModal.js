@@ -75,7 +75,7 @@ function SeeOpinionModal({ item, onChange, onClose, onSubmit, onDelete, whereTo,
             {isModalOpen2 && <Comment opinion={item} onClose={openModal2} whereTo={whereTo} />}
             <div className="modal">
                 <>
-                    {user.id === ADMIN_ID && (
+                    {user.id === ADMIN_ID && user.id !== item.user_id && (
                         <div className="button-container">
                             <Delete 
                                 opinion={item} 
