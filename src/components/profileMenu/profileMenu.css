@@ -1,7 +1,8 @@
 .menu-button {
+    margin: auto;
     background-color: var(--navbar-background-color);
     color: white;
-    width: 40px;
+    width: 45px;
     align-items: center;
     justify-content: center;
 }
@@ -22,10 +23,11 @@
     border: 1px solid #ccc;
     border-radius: 8px;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-    width: 150px;
+    width: 100px;
 }
 
 .menu-item {
+    margin: auto;
     padding: 10px 15px;
     width: 100%;
     color: white;
