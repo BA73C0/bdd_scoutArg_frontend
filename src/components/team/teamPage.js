@@ -391,12 +391,14 @@ function TeamPage() {
                         />
                     </div>
                     <div className="button-container">
-                        <AdminDeleteTeamModal teamData={teamData} />
                         <AdminAddPlayerModal fetchPlayers={ fetchPlayers } />
-                        <AdminEditTeamModal teamData={teamData} />
                     </div>
                 </>
             )}
+            <div className="button-container">
+                <AdminEditTeamModal teamData={teamData} />
+                <AdminDeleteTeamModal teamData={teamData} />
+            </div>
         </section>
     );
 }
@@ -576,7 +578,7 @@ function AdminDeleteTeamModal({ teamData }) {
 
   return (
     <>
-      <button onClick={openModal}>Borrar equipo</button>
+      <button onClick={openModal} className="cancel-button">Borrar equipo</button>
 
       {isModalOpen && (
         <div className="form-window-overlay">
