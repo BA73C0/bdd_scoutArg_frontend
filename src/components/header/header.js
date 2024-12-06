@@ -13,7 +13,7 @@ const Header = () => {
             <div className="logo-container">
                 <Link to="/teams">
                     <img 
-                        src="../ScoutArg.png"
+                        src="/ScoutArg.png"
                         alt="Logo" 
                         className="logo" 
                         style={{width: "50px", height: "50px"}}
