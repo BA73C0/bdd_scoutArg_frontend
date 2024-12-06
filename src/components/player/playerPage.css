@@ -62,3 +62,16 @@
 .add-opinion-btn:hover {
     background-color: #0cac19;
 }
+
+
+.cancel-button {
+    padding: 8px 16px;
+    border: none;
+    cursor: pointer;
+    background-color: #db5d59; 
+    color: white;
+}
+
+.cancel-button:hover{
+    background-color: #df1811; 
+}

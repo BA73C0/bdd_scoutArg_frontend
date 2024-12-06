@@ -319,7 +319,7 @@ function AdminDeletePlayerModal({ playerData }) {
 
   return (
     <>
-      <button onClick={openModal}>Borrar jugador</button>
+      <button onClick={openModal} className="cancel-button" >Borrar jugador</button>
 
       {isModalOpen && (
         <div className="form-window-overlay">
