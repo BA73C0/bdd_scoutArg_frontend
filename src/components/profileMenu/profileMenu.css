@@ -3,8 +3,11 @@
     background-color: var(--navbar-background-color);
     color: white;
     width: 45px;
-    align-items: center;
-    justify-content: center;
+    height: 45px; /* Añadir altura para asegurar que el botón sea un cuadrado */
+    display: flex; /* Usamos flexbox para centrar el contenido */
+    align-items: center; /* Centrado vertical */
+    justify-content: center; /* Centrado horizontal */
+    border-radius: 50%; /* Para que el botón sea circular */
 }
 
 .menu-button:hover {
@@ -17,7 +20,7 @@
     align-items: center;
     justify-content: center;
     position: absolute;
-    top: 95px; 
+    top: 75px; 
     right: 0;
     background-color: #004906;
     border: 1px solid #ccc;

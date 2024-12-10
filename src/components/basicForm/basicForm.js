@@ -152,7 +152,7 @@ const BasicForm = ({ fields, onSubmit, onCancel, setFile }) => {
 
       {errorMessage && <p className="error">{errorMessage}</p>}
 
-      <div className="button-container">
+      <div className="button-container-form">
         <button type="submit" className="auth-button">
           Confirmar
         </button>

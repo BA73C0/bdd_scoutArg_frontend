@@ -10,13 +10,12 @@ const Header = () => {
 
     return (
         <header className="header">
-            <div className="logo-container">
+            <div className="logo-container-header">
                 <Link to="/teams">
                     <img 
                         src="/ScoutArg.png"
                         alt="Logo" 
                         className="logo" 
-                        style={{width: "50px", height: "50px"}}
                     /> 
                 </Link>
             </div>

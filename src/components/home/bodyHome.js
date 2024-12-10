@@ -269,7 +269,7 @@ function AdminAddTeamModal({ fetchTeams }) {
 
     return (
         <>
-            <button onClick={openModal}>Agregar Equipo</button>
+            <button className="add-team-button" onClick={openModal}>Agregar Equipo</button>
 
             {isModalOpen && (
                 <div className="form-window-overlay">

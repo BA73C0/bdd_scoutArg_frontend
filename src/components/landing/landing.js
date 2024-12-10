@@ -23,15 +23,15 @@ function Landing() {
   return (
     <div className="landing">
       <div className="landing-home">
-        <button onClick={handleSignIn} className="landing-home-button">Iniciar sesión</button>
         <div className="logo-container">
           <img
             src="../ScoutArg.png"
             alt="Logo"
           />
         </div>
-        <button onClick={handleSignUp} className="landing-home-button">Registrarse</button>
       </div>
+        <button onClick={handleSignIn} className="landing-home-button">Iniciar sesión</button>
+        <button onClick={handleSignUp} className="landing-home-button">Registrarse</button>
       <div className="text-container">
         <p> La mejor plataforma para seguir el ascenso de tu equipo favorito. </p>
       </div>

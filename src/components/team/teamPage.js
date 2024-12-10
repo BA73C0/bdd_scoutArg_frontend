@@ -314,7 +314,7 @@ function TeamPage() {
                 <h1 className="team-name">{teamData.nombre}</h1>
                 <div className="rating-container">
                     <div className="stars" onClick={() => handleStarClick()} style={{cursor: "pointer"}}>
-                        <h3 className="team-name" style={{marginRight: "50px"}}>Seguidores: {teamData.seguidores.length}</h3>
+                        <h3 className="followers" style={{marginRight: "50px"}}>Seguidores: {teamData.seguidores.length}</h3>
                         {[1].map((star) => (
                             <span
                                 key={star}

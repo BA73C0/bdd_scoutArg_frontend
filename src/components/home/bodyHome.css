@@ -22,3 +22,8 @@
     align-items: center;
     z-index: 2;
 }
+
+.add-team-button {
+    margin-top: 20px;
+    padding: 10px 20px;
+}
